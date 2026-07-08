@@ -160,7 +160,7 @@
 
 
 import {
-  // IconLayoutDashboard,
+  IconLayoutDashboard,
   IconBook,
   IconCloudUp,
   IconLogs,
@@ -201,11 +201,13 @@ export const getSideLinks = (): SideLink[] => {
   const isEditor = roles.includes('Editor')
 
   const links: SideLink[] = [
-    // {
-    //   title: 'Dashboard',
-    //   href: '/',
-    //   icon: <IconLayoutDashboard size={18} />,
-    // },
+    // Default link visible to every authenticated user, regardless of role.
+    // Prevents HomeRedirect from bouncing role-less users back to /sign-in.
+    {
+      title: 'Journals',
+      href: '/journals',
+      icon: <IconLayoutDashboard size={18} />,
+    },
   ]
 
   // ================= AUTHOR =================
