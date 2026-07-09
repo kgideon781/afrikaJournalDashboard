@@ -123,27 +123,42 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [authTokens])
 
   const loginUser = async (email: string, password: string) => {
+    let response: Response
     try {
-      const response = await fetch(`${BASE_URL}/api/token/`, {
+      response = await fetch(`${BASE_URL}/api/token/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
-
-      const data = await response.json()
-      if (response.ok) {
-        setAuthTokens(data)
-        setUser(jwtDecode(data.access))
-        localStorage.setItem('authTokens', JSON.stringify(data))
-        window.location.href = '/'
-      } else {
-        alert('Login failed. Please check your credentials.')
-      }
-    } catch (error) {
-      console.error('Error:', error)
-    } finally {
-      setLoading(false)
+    } catch (error: any) {
+      // Network/DNS/CORS failure — fetch never got a response.
+      console.error('Login network error:', error)
+      throw new Error(
+        `Could not reach the server (${error?.message ?? 'network error'}). ` +
+          `Check your connection and try again.`
+      )
     }
+
+    let data: any = null
+    try {
+      data = await response.json()
+    } catch {
+      // ignore body-parse error; we'll still branch on response.ok below
+    }
+
+    if (response.ok) {
+      setAuthTokens(data)
+      setUser(jwtDecode(data.access))
+      localStorage.setItem('authTokens', JSON.stringify(data))
+      window.location.href = '/'
+      return
+    }
+
+    // Response arrived but the server rejected the credentials/request.
+    const serverDetail =
+      (data && (data.detail || data.error || data.message)) ||
+      `HTTP ${response.status} ${response.statusText}`
+    throw new Error(serverDetail)
   }
 
   const registerUser = async (
