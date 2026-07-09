@@ -250,6 +250,16 @@ export const getSideLinks = (): SideLink[] => {
         href: '/editors_list',
         icon: <IconLogs size={18} />,
       },
+      {
+        title: 'Add Journal',
+        href: '/journal_update',
+        icon: <IconFileDescription size={18} />,
+      },
+      {
+        title: 'Journal List',
+        href: '/journal_list',
+        icon: <IconLogs size={18} />,
+      },
       // {
       //   title: 'Editors Manuscripts',
       //   href: '/editors_manuscript',
