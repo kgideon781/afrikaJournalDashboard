@@ -197,8 +197,6 @@
 
 
 import { Layout } from '@/components/custom/layout'
-import { TopNav } from "@/components/top-nav";
-import { UserNav } from "@/components/user-nav";
 import { useState, useEffect } from 'react';
 import { BASE_URL } from '@/config'
 const SubmitManuscripts = () => {
@@ -337,14 +335,6 @@ const SubmitManuscripts = () => {
       setLoading(false);
     }
   };
-
-  const topNav = [
-  {
-    title: " ",
-    href: " ",
-    isActive: true,
-  },
-];
 
   return (
     <Layout>

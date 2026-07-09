@@ -2,8 +2,6 @@
 import { useEffect, useState } from 'react'
 import { BASE_URL } from '@/config'
 import { Layout } from '@/components/custom/layout'
-import { TopNav } from "@/components/top-nav";
-import { UserNav } from "@/components/user-nav";
 interface Manuscript {
   id: number
   journal: number
@@ -81,14 +79,6 @@ const Index = () => {
       </div>
     )
   }
-
-  const topNav = [
-  {
-    title: " ",
-    href: " ",
-    isActive: true,
-  },
-];
 
   return (
       <Layout>

@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Layout } from '@/components/custom/layout'
-import { TopNav } from '@/components/top-nav'
-import { UserNav } from '@/components/user-nav'
 import { BASE_URL } from '@/config'
 
 interface PendingJournal {
@@ -80,7 +78,6 @@ export default function PendingJournals() {
     }
   }
 
-  const topNav = [{ title: ' ', href: ' ', isActive: true }]
 
   return (
     <Layout>

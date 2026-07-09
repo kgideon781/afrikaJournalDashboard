@@ -1,20 +1,10 @@
 import { Layout } from "@/components/custom/layout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TopNav } from "@/components/top-nav";
-import { UserNav } from "@/components/user-nav";
 import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { ChartsGrid } from "@/components/dashboard/charts-grid";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
 import { Download } from "lucide-react";
-
-const topNav = [
-  {
-    title: "Overview",
-    href: "dashboard/overview",
-    isActive: true,
-  },
-];
 
 export default function Dashboard() {
   return (
