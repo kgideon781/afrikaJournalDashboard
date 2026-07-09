@@ -6,7 +6,9 @@ interface ArticleCardProps {
     title: string;
     authors: string;
     citation_count: number;
-    url: string;
+    doi?: string | null;
+    pdf?: string | null;
+    url?: string | null;
     abstract: string;
   };
 }
@@ -40,14 +42,20 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         <p className="mt-2 text-sm text-gray-600">{article.abstract}</p>
       </div>
 
-      <a
-        href={article.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center text-sm font-medium text-blue-600 transition-colors hover:text-blue-800"
-      >
-        Read more →
-      </a>
+      {(() => {
+        const readMoreHref = article.pdf || article.url || (article.doi ? `https://doi.org/${article.doi}` : null)
+        if (!readMoreHref) return null
+        return (
+          <a
+            href={readMoreHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-sm font-medium text-blue-600 transition-colors hover:text-blue-800"
+          >
+            Read more →
+          </a>
+        )
+      })()}
     </div>
   );
 }
