@@ -212,10 +212,12 @@ const SubmitManuscripts = () => {
   const [message, setMessage] = useState('');
 
   // Journal selector state — populated from /journal_api/journals/.
-  interface JournalOption { id: number; journal_title: string }
+  interface JournalOption { id: number; journal_title: string; approved?: boolean }
   const [journals, setJournals] = useState<JournalOption[]>([]);
   const [journalId, setJournalId] = useState<string>('');
   const [journalsLoading, setJournalsLoading] = useState(true);
+  const [journalSearch, setJournalSearch] = useState('');
+  const [journalPickerOpen, setJournalPickerOpen] = useState(false);
 
   useEffect(() => {
     // Fetch all pages in parallel — DRF caps page_size at 100, and there
@@ -243,8 +245,15 @@ const SubmitManuscripts = () => {
         );
         const all: JournalOption[] = [first, ...rest]
           .flatMap((p: any) => p.results || [])
-          .map((j: any) => ({ id: j.id, journal_title: j.journal_title }))
-          .sort((a, b) => a.journal_title.localeCompare(b.journal_title));
+          .map((j: any) => ({
+            id: j.id,
+            journal_title: j.journal_title,
+            approved: Boolean(j.approved),
+          }))
+          .filter((j: JournalOption) => j.approved)
+          .sort((a: JournalOption, b: JournalOption) =>
+            a.journal_title.localeCompare(b.journal_title)
+          );
         if (!cancelled) setJournals(all);
       } catch (err) {
         console.error('Failed to load journals list', err);
@@ -363,23 +372,71 @@ const SubmitManuscripts = () => {
                 Journal
               </label>
 
-              <select
-                value={journalId}
-                onChange={(e) => setJournalId(e.target.value)}
-                disabled={journalsLoading}
-                className="w-full border rounded p-3 bg-white disabled:bg-gray-100"
-              >
-                <option value="">
-                  {journalsLoading
-                    ? 'Loading journals…'
-                    : '— Select a journal —'}
-                </option>
-                {journals.map((j) => (
-                  <option key={j.id} value={String(j.id)}>
-                    {j.journal_title}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={journalSearch}
+                  onChange={(e) => {
+                    setJournalSearch(e.target.value);
+                    setJournalId('');
+                    setJournalPickerOpen(true);
+                  }}
+                  onFocus={() => setJournalPickerOpen(true)}
+                  onBlur={() =>
+                    // slight delay so click on an option registers first
+                    setTimeout(() => setJournalPickerOpen(false), 150)
+                  }
+                  placeholder={
+                    journalsLoading
+                      ? 'Loading approved journals…'
+                      : 'Start typing to search…'
+                  }
+                  disabled={journalsLoading}
+                  className="w-full border rounded p-3 bg-white disabled:bg-gray-100"
+                  autoComplete="off"
+                />
+                {journalPickerOpen && !journalsLoading && (
+                  <ul className="absolute z-10 mt-1 max-h-64 w-full overflow-y-auto rounded border bg-white shadow">
+                    {(() => {
+                      const q = journalSearch.trim().toLowerCase();
+                      const filtered = q
+                        ? journals.filter((j) =>
+                            j.journal_title.toLowerCase().includes(q)
+                          )
+                        : journals;
+                      if (filtered.length === 0) {
+                        return (
+                          <li className="p-3 text-sm text-gray-500">
+                            No matching journals.
+                          </li>
+                        );
+                      }
+                      return filtered.slice(0, 100).map((j) => (
+                        <li
+                          key={j.id}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setJournalId(String(j.id));
+                            setJournalSearch(j.journal_title);
+                            setJournalPickerOpen(false);
+                          }}
+                          className={
+                            'cursor-pointer p-2 hover:bg-gray-100 ' +
+                            (String(j.id) === journalId ? 'bg-blue-50' : '')
+                          }
+                        >
+                          {j.journal_title}
+                        </li>
+                      ));
+                    })()}
+                  </ul>
+                )}
+                {journalId && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Selected journal id: {journalId}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div>

@@ -170,6 +170,12 @@ const router = createBrowserRouter([
         }),
       },
       {
+        path: 'pending_journals',
+        lazy: async () => ({
+          Component: (await import('./pages/pendingJournals')).default,
+        }),
+      },
+      {
         path: 'volume_update/',
         lazy: async () => ({
           Component: (await import('./pages/volumeUpdate')).default,

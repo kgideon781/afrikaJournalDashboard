@@ -260,6 +260,11 @@ export const getSideLinks = (): SideLink[] => {
         href: '/journal_list',
         icon: <IconLogs size={18} />,
       },
+      {
+        title: 'Pending Journals',
+        href: '/pending_journals',
+        icon: <IconFileDescription size={18} />,
+      },
       // {
       //   title: 'Editors Manuscripts',
       //   href: '/editors_manuscript',
