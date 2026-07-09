@@ -1,4 +1,6 @@
 import { Layout } from '@/components/custom/layout'
+import { TopNav } from '@/components/top-nav'
+import { UserNav } from '@/components/user-nav'
 import { Input } from '@/components/ui/input'
 import { IconSearch, IconFilter, IconRefresh, IconX } from '@tabler/icons-react'
 import {
@@ -238,8 +240,16 @@ export default function Journals() {
     fetchArticles(1, dynamicUrl) // Pass the dynamic URL for the first page
   }
 
+  const topNav = [{ title: ' ', href: ' ', isActive: true }]
+
   return (
     <Layout>
+      <Layout.Header>
+        <TopNav links={topNav} />
+        <div className="ml-auto flex items-center space-x-4">
+          <UserNav />
+        </div>
+      </Layout.Header>
       <Layout.Body>
         <div className='p-4 md:p-6'>
           <div className='mb-4 flex items-center justify-between '>
