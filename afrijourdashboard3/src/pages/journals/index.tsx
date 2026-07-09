@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react'
 import { Layout } from '@/components/custom/layout'
-import { Input } from '@/components/ui/input'
 import { IconSearch, IconFilter, IconRefresh, IconX } from '@tabler/icons-react'
 import {
   Pagination,
@@ -10,34 +10,23 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { useState, useEffect } from 'react'
-import { ArticleCard } from '@/components/articles/ArticleCard'
-// import { FilterPanel } from '@/components/filters/FilterPanel';
 import { Loader2 } from 'lucide-react'
+import { ArticleCard } from '@/components/articles/ArticleCard'
 import NotFoundPage from './components/NotFoundPage'
-import { ScrollArea } from '@/components/ui/scroll-area'
+
 interface Article {
   title: string
   authors: string
   citation_count: number
   url: string
   abstract: string
+  doi?: string | null
+  pdf?: string | null
 }
 
-interface Country {
-  id: number
-  country: string
-}
-
-interface ThematicArea {
-  id: number
-  thematic_area: string
-}
-
-interface Language {
-  id: number
-  language: string
-}
+interface Country { id: number; country: string }
+interface ThematicArea { id: number; thematic_area: string }
+interface Language { id: number; language: string }
 
 export default function Journals() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -52,9 +41,7 @@ export default function Journals() {
   const [languages, setLanguages] = useState<Language[]>([])
 
   const [selectedCountries, setSelectedCountries] = useState<number[]>([])
-  const [selectedThematicAreas, setSelectedThematicAreas] = useState<number[]>(
-    []
-  )
+  const [selectedThematicAreas, setSelectedThematicAreas] = useState<number[]>([])
   const [selectedLanguages, setSelectedLanguages] = useState<number[]>([])
 
   const [viewMoreCountries, setViewMoreCountries] = useState(false)
@@ -62,461 +49,433 @@ export default function Journals() {
   const [viewMorelanguages, setViewMoreLanguages] = useState(false)
   const [filteredQuery, setFilteredQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  // const [results, setResults] = useState(0)
+
+  // ---- data-fetching helpers ------------------------------------------------
   const fetchArticles = async (page = 1, customUrl?: string) => {
-    setIsLoading(true) // Start loading
+    setIsLoading(true)
     try {
       const url =
         customUrl ||
         `https://backend.afrikajournals.org/journal_api/articles/search/?query=${searchTerm}&page=${page}&page_size=${pageSize}`
-
-      console.log('Fetching articles from URL:', url) // Log the URL being requested
-
       const response = await fetch(url)
-
-      // Check if response is OK (status 200-299)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch articles: ${response.statusText}`)
-      }
-
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = await response.json()
-      console.log('data', data.count)
-      // Ensure data has expected structure
       if (data && data.results) {
         setArticles(
           data.results.map((article: any) => ({
             ...article,
             abstract:
               article.abstract ||
-              'Abstract not available. This is a placeholder text that would normally contain 2-3 sentences describing the main points of the research article.',
+              'Abstract not available. This is a placeholder describing the main points of the article.',
           }))
         )
         setTotalPages(Math.ceil(data.count / pageSize))
-        // setResults(data.count)
       } else {
-        // setResults(0)
-        throw new Error('Invalid data structure received from API')
+        throw new Error('Invalid data from API')
       }
-    } catch (error) {
-      console.error('Error fetching articles:', error)
+    } catch (err) {
+      console.error(err)
     } finally {
-      setIsLoading(false) // Stop loading
+      setIsLoading(false)
     }
   }
 
-
   const fetchArticles1 = async (page = 1, customUrl?: string) => {
-    setIsLoading(true) // Start loading
+    setIsLoading(true)
     try {
       const url =
         customUrl ||
         `https://backend.afrikajournals.org/journal_api/articles/search/?&page=${page}&page_size=${pageSize}`
-
-      console.log('Fetching articles from URL:', url) // Log the URL being requested
-
       const response = await fetch(url)
-
-      // Check if response is OK (status 200-299)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch articles: ${response.statusText}`)
-      }
-
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = await response.json()
-      console.log('data', data.count)
-      // Ensure data has expected structure
       if (data && data.results) {
         setArticles(
           data.results.map((article: any) => ({
             ...article,
             abstract:
               article.abstract ||
-              'Abstract not available. This is a placeholder text that would normally contain 2-3 sentences describing the main points of the research article.',
+              'Abstract not available. This is a placeholder describing the main points of the article.',
           }))
         )
         setTotalPages(Math.ceil(data.count / pageSize))
-        // setResults(data.count)
-      } else {
-        // setResults(0)
-        throw new Error('Invalid data structure received from API')
       }
-    } catch (error) {
-      console.error('Error fetching articles:', error)
+    } catch (err) {
+      console.error(err)
     } finally {
-      setIsLoading(false) // Stop loading
+      setIsLoading(false)
     }
   }
 
   const fetchFiltersData = async () => {
     try {
-      const [countriesRes, thematicRes, languagesRes] = await Promise.all([
+      const [c, t, l] = await Promise.all([
         fetch('https://backend.afrikajournals.org/journal_api/api/country/'),
         fetch('https://backend.afrikajournals.org/journal_api/api/thematic/'),
         fetch('https://backend.afrikajournals.org/journal_api/api/languages/'),
       ])
-
-      setCountries(await countriesRes.json())
-      setThematicAreas(await thematicRes.json())
-      setLanguages(await languagesRes.json())
-    } catch (error) {
-      console.error('Error fetching filter data:', error)
+      setCountries(await c.json())
+      setThematicAreas(await t.json())
+      setLanguages(await l.json())
+    } catch (err) {
+      console.error(err)
     }
   }
 
   useEffect(() => {
-    const loadFiltersAndArticles = async () => {
-      // Fetch filters data and then fetch articles
-      await fetchFiltersData() // Ensure filters are fetched first
-    }
-
-    loadFiltersAndArticles()
-  }, [searchTerm, currentPage]) // Trigger whenever searchTerm or currentPage changes
+    fetchFiltersData()
+  }, [searchTerm, currentPage])
 
   useEffect(() => {
     fetchArticles(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // ---- handlers -------------------------------------------------------------
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
-
     const url = filteredQuery
       ? `https://backend.afrikajournals.org/journal_api/articles/search/?query=${filteredQuery}&page=${page}&page_size=${pageSize}`
       : `https://backend.afrikajournals.org/journal_api/articles/search/?query=${searchTerm}&page=${page}&page_size=${pageSize}`
-
     fetchArticles(page, url)
   }
-
-  const handleCountryChange = (id: number) => {
-    setSelectedCountries((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    )
-  }
-
-  const handleThematicAreaChange = (id: number) => {
-    setSelectedThematicAreas((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    )
-  }
-
-  const handleLanguageChange = (id: number) => {
-    setSelectedLanguages((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    )
-  }
+  const toggleId = (setter: React.Dispatch<React.SetStateAction<number[]>>) => (id: number) =>
+    setter((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+  const handleCountryChange = toggleId(setSelectedCountries)
+  const handleThematicAreaChange = toggleId(setSelectedThematicAreas)
+  const handleLanguageChange = toggleId(setSelectedLanguages)
 
   const handleApplyFilters = () => {
-    const queryParams = []
-
+    const queryParams: string[] = []
     if (selectedCountries.length > 0) {
-      const countriesQuery = countries
-        .filter((country) => selectedCountries.includes(country.id))
-        .map((country) => country.country)
-        .join(' ')
-      queryParams.push(countriesQuery)
+      queryParams.push(
+        countries
+          .filter((c) => selectedCountries.includes(c.id))
+          .map((c) => c.country)
+          .join(' ')
+      )
     }
-
     if (selectedThematicAreas.length > 0) {
-      const thematicQuery = thematicAreas
-        .filter((area) => selectedThematicAreas.includes(area.id))
-        .map((area) => area.thematic_area)
-        .join(' ')
-      queryParams.push(thematicQuery)
+      queryParams.push(
+        thematicAreas
+          .filter((a) => selectedThematicAreas.includes(a.id))
+          .map((a) => a.thematic_area)
+          .join(' ')
+      )
     }
-
     if (selectedLanguages.length > 0) {
-      const languagesQuery = languages
-        .filter((lang) => selectedLanguages.includes(lang.id))
-        .map((lang) => lang.language)
-        .join(' ')
-      queryParams.push(languagesQuery)
+      queryParams.push(
+        languages
+          .filter((l) => selectedLanguages.includes(l.id))
+          .map((l) => l.language)
+          .join(' ')
+      )
     }
-
     const dynamicQuery = encodeURIComponent(queryParams.join(' '))
     setFilteredQuery(dynamicQuery)
     setShowFilterForm(false)
-
-    const dynamicUrl = `https://backend.afrikajournals.org/journal_api/articles/search/?query=${dynamicQuery}`
-    fetchArticles(1, dynamicUrl) // Pass the dynamic URL for the first page
+    fetchArticles(
+      1,
+      `https://backend.afrikajournals.org/journal_api/articles/search/?query=${dynamicQuery}`
+    )
   }
 
+  const resetAll = () => {
+    setSearchTerm('')
+    setSelectedCountries([])
+    setSelectedThematicAreas([])
+    setSelectedLanguages([])
+    setFilteredQuery('')
+    setShowFilterForm(false)
+    setCurrentPage(1)
+    fetchArticles1(1)
+  }
+
+  const activeFilterCount =
+    selectedCountries.length + selectedThematicAreas.length + selectedLanguages.length
+
+  // ---- pagination helper ----------------------------------------------------
+  const buildPageList = (current: number, total: number): (number | 'ellipsis')[] => {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+    const pages: (number | 'ellipsis')[] = [1]
+    if (current > 3) pages.push('ellipsis')
+    const start = Math.max(2, current - 1)
+    const end = Math.min(total - 1, current + 1)
+    for (let i = start; i <= end; i++) pages.push(i)
+    if (current < total - 2) pages.push('ellipsis')
+    pages.push(total)
+    return pages
+  }
 
   return (
     <Layout>
-<Layout.Body>
-        <div className='p-4 md:p-6'>
-          <div className='mb-4 flex items-center justify-between '>
-            <div className='relative w-full '>
-              <Input
-                type='search'
-                placeholder='Search...'
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className='border-mutedpy-2 block w-full rounded-lg border bg-white pl-10 pr-4 text-sm text-foreground focus:border-primary focus:ring-primary'
-              />
-              <div className='absolute inset-y-0 right-0 flex items-center space-x-3 pr-3'>
-                <IconRefresh
-                  className='h-5 w-5 cursor-pointer text-muted-foreground hover:text-primary'
+      <Layout.Body className='mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8'>
+        {/* Header */}
+        <div className='mb-6'>
+          <h1 className='text-2xl font-semibold tracking-tight md:text-3xl'>
+            Journals & articles
+          </h1>
+          <p className='mt-1 text-sm text-muted-foreground'>
+            Search the AJV article corpus. Filter by country, thematic area or language.
+          </p>
+        </div>
+
+        {/* Search bar */}
+        <div className='mb-5 flex flex-col gap-3 sm:flex-row sm:items-center'>
+          <div className='relative flex-1'>
+            <IconSearch className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+            <input
+              type='search'
+              placeholder='Search articles…'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') fetchArticles(1)
+              }}
+              className='w-full rounded-md border border-border/60 bg-background/60 py-2.5 pl-9 pr-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
+            />
+          </div>
+          <div className='flex items-center gap-2'>
+            <button
+              onClick={() => fetchArticles(1)}
+              className='inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90'
+            >
+              <IconSearch size={16} />
+              Search
+            </button>
+            <button
+              onClick={() => setShowFilterForm(true)}
+              className={
+                'relative inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm transition ' +
+                (activeFilterCount > 0
+                  ? 'border-primary/60 bg-primary/10 text-primary'
+                  : 'border-border/60 bg-card/60 hover:border-primary/40 hover:bg-muted/40')
+              }
+            >
+              <IconFilter size={16} />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className='ml-1 rounded-full bg-primary px-1.5 py-0.5 text-[10px] text-primary-foreground'>
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={resetAll}
+              className='inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-card/60 px-3 py-2 text-sm hover:border-primary/40 hover:bg-muted/40'
+              title='Reset'
+            >
+              <IconRefresh size={16} />
+              <span className='hidden sm:inline'>Reset</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Results */}
+        {isLoading && (
+          <div className='flex items-center justify-center py-16 text-muted-foreground'>
+            <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+            Loading articles…
+          </div>
+        )}
+
+        {!isLoading && articles.length === 0 && (
+          <NotFoundPage />
+        )}
+
+        {!isLoading && articles.length > 0 && (
+          <>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+              {articles.map((a, i) => (
+                <ArticleCard key={i} article={a} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className='mt-8 flex justify-center'>
+                <Pagination>
+                  <PaginationContent className='flex-wrap justify-center'>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href='#'
+                        onClick={(e) => {
+                          e.preventDefault()
+                          if (currentPage > 1) handlePageChange(currentPage - 1)
+                        }}
+                        aria-disabled={currentPage <= 1}
+                      />
+                    </PaginationItem>
+                    {buildPageList(currentPage, totalPages).map((p, idx) =>
+                      p === 'ellipsis' ? (
+                        <PaginationItem key={`e-${idx}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      ) : (
+                        <PaginationItem key={p}>
+                          <PaginationLink
+                            href='#'
+                            isActive={p === currentPage}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              handlePageChange(p)
+                            }}
+                          >
+                            {p}
+                          </PaginationLink>
+                        </PaginationItem>
+                      )
+                    )}
+                    <PaginationItem>
+                      <PaginationNext
+                        href='#'
+                        onClick={(e) => {
+                          e.preventDefault()
+                          if (currentPage < totalPages) handlePageChange(currentPage + 1)
+                        }}
+                        aria-disabled={currentPage >= totalPages}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ================= FILTER DRAWER ================= */}
+        {showFilterForm && (
+          <>
+            {/* Overlay */}
+            <div
+              onClick={() => setShowFilterForm(false)}
+              className='fixed inset-0 z-40 bg-black/60 backdrop-blur-sm'
+            />
+            {/* Panel */}
+            <aside className='fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-border/60 bg-card shadow-2xl'>
+              <header className='flex items-center justify-between border-b border-border/60 px-5 py-4'>
+                <h2 className='text-lg font-semibold'>Filters</h2>
+                <button
+                  onClick={() => setShowFilterForm(false)}
+                  className='rounded-md p-1 hover:bg-muted/60'
+                  aria-label='Close filters'
+                >
+                  <IconX size={20} />
+                </button>
+              </header>
+
+              <div className='flex-1 space-y-6 overflow-y-auto px-5 py-4'>
+                {/* Countries */}
+                <FilterSection
+                  title='Countries'
+                  items={countries.map((c) => ({
+                    id: c.id,
+                    label: c.country,
+                    checked: selectedCountries.includes(c.id),
+                  }))}
+                  expanded={viewMoreCountries}
+                  setExpanded={setViewMoreCountries}
+                  onToggle={handleCountryChange}
+                />
+
+                {/* Thematic areas */}
+                <FilterSection
+                  title='Thematic areas'
+                  items={thematicAreas.map((a) => ({
+                    id: a.id,
+                    label: a.thematic_area,
+                    checked: selectedThematicAreas.includes(a.id),
+                  }))}
+                  expanded={viewMoreThematicAreas}
+                  setExpanded={setViewMoreThematicAreas}
+                  onToggle={handleThematicAreaChange}
+                />
+
+                {/* Languages */}
+                <FilterSection
+                  title='Languages'
+                  items={languages.map((l) => ({
+                    id: l.id,
+                    label: l.language,
+                    checked: selectedLanguages.includes(l.id),
+                  }))}
+                  expanded={viewMorelanguages}
+                  setExpanded={setViewMoreLanguages}
+                  onToggle={handleLanguageChange}
+                />
+              </div>
+
+              <footer className='flex items-center gap-2 border-t border-border/60 px-5 py-4'>
+                <button
                   onClick={() => {
-                    setSearchTerm('')
                     setSelectedCountries([])
                     setSelectedThematicAreas([])
                     setSelectedLanguages([])
-                    setFilteredQuery('')
-                    setShowFilterForm(false)
-                    setCurrentPage(1)
-                    fetchArticles1(currentPage)
                   }}
-                />
-                <IconFilter
-                  className='h-5 w-5 cursor-pointer text-muted-foreground hover:text-primary'
-                  onClick={() => setShowFilterForm((prev) => !prev)}
-                />
-                <IconSearch
-                  className='h-5 w-5 cursor-pointer text-muted-foreground hover:text-primary'
-                  onClick={() => fetchArticles(1)}
-                />
-              </div>
-            </div>
-          </div>
-          {/* <h1 className='mb-4 text-2xl font-bold text-primary'>
-            {results} Articles
-          </h1> */}
-
-          {showFilterForm && (
-            <div className='w-70 max-w-70 box-sizing: border-box fixed left-0 top-0 z-50 h-full overflow-x-auto overflow-y-auto bg-white p-4 shadow-lg'>
-              <h3 className='mb-4 text-lg font-bold'>Article Filters</h3>
-
-              <IconX
-                className='absolute right-4 top-4 cursor-pointer text-muted-foreground hover:text-primary'
-                onClick={() => setShowFilterForm(false)} // Close the form on click
-              />
-
-              <div className='mb-6 w-full'>
-                <h4 className='mb-2 font-semibold'>Countries</h4>
-                <div className='w-full'>
-                  {countries
-                    .slice(0, viewMoreCountries ? countries.length : 5)
-                    .map((country) => (
-                      <div
-                        key={country.id}
-                        className='mb-2 flex w-full items-center'
-                      >
-                        <input
-                          type='checkbox'
-                          id={`country-${country.id}`}
-                          className='mr-2'
-                          checked={selectedCountries.includes(country.id)}
-                          onChange={() => handleCountryChange(country.id)} // Handles checkbox toggle
-                        />
-                        <label
-                          htmlFor={`country-${country.id}`}
-                          className='w-56 break-words'
-                        >
-                          {country.country}
-                        </label>
-                      </div>
-                    ))}
-                </div>
-                <button
-                  className='mt-2 text-primary'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setViewMoreCountries((prev) => !prev)
-                  }}
+                  className='flex-1 rounded-md border border-border/60 bg-card px-3 py-2 text-sm hover:border-primary/40 hover:bg-muted/40'
                 >
-                  {viewMoreCountries ? 'View Less' : 'View More'}
+                  Clear
                 </button>
-              </div>
-
-              <div className='mb-6 w-full'>
-                <h4 className='mb-2 font-semibold'>Thematic Areas</h4>
-                <div className='w-full'>
-                  {thematicAreas
-                    .slice(0, viewMoreThematicAreas ? thematicAreas.length : 5)
-                    .map((area) => (
-                      <div
-                        key={area.id}
-                        className='mb-2 flex w-full items-center'
-                      >
-                        <input
-                          type='checkbox'
-                          id={`thematic-${area.id}`}
-                          className='mr-2'
-                          checked={selectedThematicAreas.includes(area.id)}
-                          onChange={() => handleThematicAreaChange(area.id)} // Handles checkbox toggle
-                        />
-                        <label
-                          htmlFor={`thematic-${area.id}`}
-                          className='w-56 break-words'
-                        >
-                          {area.thematic_area}
-                        </label>
-                      </div>
-                    ))}
-                </div>
                 <button
-                  className='mt-2 text-primary'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setViewMoreThematicAreas((prev) => !prev)
-                  }}
+                  onClick={handleApplyFilters}
+                  className='flex-1 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90'
                 >
-                  {viewMoreThematicAreas ? 'View Less' : 'View More'}
+                  Apply filters
                 </button>
-              </div>
-
-              <div className='mb-6 w-full'>
-                <h4 className='mb-2 font-semibold'>Languages</h4>
-                <div className='w-full'>
-                  {languages
-                    .slice(0, viewMorelanguages ? languages.length : 5)
-                    .map((language) => (
-                      <div
-                        key={language.id}
-                        className='mb-2 flex w-full items-center'
-                      >
-                        <input
-                          type='checkbox'
-                          id={`language-${language.id}`}
-                          className='mr-2'
-                          checked={selectedLanguages.includes(language.id)}
-                          onChange={() => handleLanguageChange(language.id)} // Handles checkbox toggle
-                        />
-                        <label
-                          htmlFor={`language-${language.id}`}
-                          className='w-56 break-words'
-                        >
-                          {language.language}
-                        </label>
-                      </div>
-                    ))}
-                </div>
-                <button
-                  className='mt-2 text-primary'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setViewMoreLanguages((prev) => !prev)
-                  }}
-                >
-                  {viewMorelanguages ? 'View Less' : 'View More'}
-                </button>
-              </div>
-              {/* bg-[#BFEFFF] */}
-              <button
-                className='mt-6 w-full rounded-lg bg-[#466785] py-2 text-white'
-                onClick={handleApplyFilters} // Call the dynamic URL builder and fetcher
-              >
-                Apply Filters
-              </button>
-            </div>
-          )}
-          <ScrollArea className='flex h-[800px] items-center justify-center overflow-hidden rounded-2xl border bg-white p-4 shadow-lg'>
-            {isLoading ? (
-              <div className='flex h-full w-full items-center justify-center'>
-                <Loader2 className='h-8 w-8 animate-spin text-primary' />
-              </div>
-            ) : (
-              <>
-                <div className='space-y-6'>
-                  {articles.length > 0 ? (
-                    articles.map((article, index) => (
-                      <ArticleCard key={index} article={article} />
-                    ))
-                  ) : (
-                    <div className=' flex  items-center justify-center'>
-                      <NotFoundPage />
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </ScrollArea>
-          {articles.length > 0 && (
-            <div className='mt-6'>
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      href='#'
-                      onClick={(e) => {
-                        e.preventDefault()
-                        if (currentPage > 1) handlePageChange(currentPage - 1)
-                      }}
-                      aria-disabled={currentPage <= 1}
-                    />
-                  </PaginationItem>
-                  {currentPage > 3 && (
-                    <>
-                      <PaginationItem>
-                        <PaginationLink
-                          href='#'
-                          isActive={currentPage === 1}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            handlePageChange(1)
-                          }}
-                        >
-                          1
-                        </PaginationLink>
-                      </PaginationItem>
-                      <PaginationEllipsis />
-                    </>
-                  )}
-                  {[...Array(totalPages)]
-                    .map((_, index) => index + 1)
-                    .filter(
-                      (page) =>
-                        page === 1 ||
-                        page === totalPages ||
-                        (page >= currentPage - 2 && page <= currentPage + 2)
-                    )
-                    .map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          href='#'
-                          isActive={currentPage === page}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            handlePageChange(page)
-                          }}
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                  {currentPage < totalPages - 2 && (
-                    <>
-                      <PaginationEllipsis />
-                      <PaginationItem>
-                        <PaginationLink
-                          href='#'
-                          isActive={currentPage === totalPages}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            handlePageChange(totalPages)
-                          }}
-                        >
-                          {totalPages}
-                        </PaginationLink>
-                      </PaginationItem>
-                    </>
-                  )}
-                  <PaginationItem>
-                    <PaginationNext
-                      href='#'
-                      onClick={(e) => {
-                        e.preventDefault()
-                        if (currentPage < totalPages)
-                          handlePageChange(currentPage + 1)
-                      }}
-                      aria-disabled={currentPage >= totalPages}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
-        </div>
+              </footer>
+            </aside>
+          </>
+        )}
       </Layout.Body>
     </Layout>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Small subcomponent for repeating filter sections (countries / thematic /
+// languages). Keeps the JSX manageable in the main return.
+// ---------------------------------------------------------------------------
+function FilterSection({
+  title,
+  items,
+  expanded,
+  setExpanded,
+  onToggle,
+}: {
+  title: string
+  items: { id: number; label: string; checked: boolean }[]
+  expanded: boolean
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>
+  onToggle: (id: number) => void
+}) {
+  const visible = expanded ? items : items.slice(0, 5)
+  return (
+    <section>
+      <h3 className='mb-2 text-sm font-semibold text-foreground'>{title}</h3>
+      <div className='space-y-1.5'>
+        {visible.map((it) => (
+          <label
+            key={it.id}
+            className='flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-muted/40'
+          >
+            <input
+              type='checkbox'
+              checked={it.checked}
+              onChange={() => onToggle(it.id)}
+              className='h-4 w-4 rounded border-border/70 bg-background text-primary focus:ring-primary'
+            />
+            <span className='flex-1 break-words text-foreground/90'>{it.label}</span>
+          </label>
+        ))}
+      </div>
+      {items.length > 5 && (
+        <button
+          onClick={() => setExpanded((p) => !p)}
+          className='mt-1.5 text-xs font-medium text-primary hover:text-primary/80'
+        >
+          {expanded ? 'View less' : `View all ${items.length}`}
+        </button>
+      )}
+    </section>
   )
 }
