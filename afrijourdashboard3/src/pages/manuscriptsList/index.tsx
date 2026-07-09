@@ -92,13 +92,7 @@ const Index = () => {
 
   return (
       <Layout>
-        <Layout.Header>
-                <TopNav links={topNav} />
-                <div className="ml-auto flex items-center space-x-4">
-                  <UserNav />
-                </div>
-          </Layout.Header>
-        <Layout.Body>
+<Layout.Body>
     <div className="p-6">
       <h1 className="mb-6 text-2xl font-bold">My Manuscripts</h1>
 

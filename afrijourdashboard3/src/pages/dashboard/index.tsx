@@ -19,14 +19,7 @@ const topNav = [
 export default function Dashboard() {
   return (
     <Layout>
-      <Layout.Header>
-        <TopNav links={topNav} />
-        <div className="ml-auto flex items-center space-x-4">
-          <UserNav />
-        </div>
-      </Layout.Header>
-
-      <Layout.Body>
+<Layout.Body>
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>

@@ -348,13 +348,7 @@ const SubmitManuscripts = () => {
 
   return (
     <Layout>
-       <Layout.Header>
-                      <TopNav links={topNav} />
-                      <div className="ml-auto flex items-center space-x-4">
-                        <UserNav />
-                      </div>
-      </Layout.Header> 
-       <Layout.Body>
+<Layout.Body>
     <div className="p-6">
       <div className="bg-white rounded-lg shadow p-6 max-w-6xl mx-auto">
 

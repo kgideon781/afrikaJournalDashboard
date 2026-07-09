@@ -244,13 +244,7 @@ export default function Journals() {
 
   return (
     <Layout>
-      <Layout.Header>
-        <TopNav links={topNav} />
-        <div className="ml-auto flex items-center space-x-4">
-          <UserNav />
-        </div>
-      </Layout.Header>
-      <Layout.Body>
+<Layout.Body>
         <div className='p-4 md:p-6'>
           <div className='mb-4 flex items-center justify-between '>
             <div className='relative w-full '>

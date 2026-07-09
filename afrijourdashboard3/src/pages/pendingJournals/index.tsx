@@ -84,13 +84,7 @@ export default function PendingJournals() {
 
   return (
     <Layout>
-      <Layout.Header>
-        <TopNav links={topNav} />
-        <div className="ml-auto flex items-center space-x-4">
-          <UserNav />
-        </div>
-      </Layout.Header>
-      <Layout.Body>
+<Layout.Body>
         <div className="p-6">
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-bold">Pending Journals</h1>

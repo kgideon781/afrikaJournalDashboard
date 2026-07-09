@@ -22,14 +22,7 @@ const index = () => {
   ]
   return (
     <Layout>
-          <Layout.Header>
-            <TopNav links={topNav} />
-            <div className="ml-auto flex items-center space-x-4">
-              <UserNav />
-            </div>
-          </Layout.Header>
-    
-          {/* IMPORTANT: overflow fix for scrolling */}
+{/* IMPORTANT: overflow fix for scrolling */}
           <Layout.Body className="h-[calc(100vh-80px)] overflow-y-auto p-6">
     <div>Editors Decision</div>
     </Layout.Body>
