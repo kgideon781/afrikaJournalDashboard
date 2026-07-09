@@ -199,7 +199,7 @@
 import { Layout } from '@/components/custom/layout'
 import { TopNav } from "@/components/top-nav";
 import { UserNav } from "@/components/user-nav";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BASE_URL } from '@/config'
 const SubmitManuscripts = () => {
   // User-entered fields
@@ -211,10 +211,51 @@ const SubmitManuscripts = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  // Static FK values
-  const journalId = 6015;
-  const journalTitle = 'Test1';
-  const correspondingAuthorId = 4;
+  // Journal selector state — populated from /journal_api/journals/.
+  interface JournalOption { id: number; journal_title: string }
+  const [journals, setJournals] = useState<JournalOption[]>([]);
+  const [journalId, setJournalId] = useState<string>('');
+  const [journalsLoading, setJournalsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch all pages in parallel — DRF caps page_size at 100, and there
+    // are ~2000 journals, so we discover the total on page 1 and then fire
+    // page 2..N concurrently.
+    let cancelled = false;
+    (async () => {
+      try {
+        const firstRes = await fetch(
+          `${BASE_URL}/journal_api/journals/?page=1&page_size=100`
+        );
+        if (!firstRes.ok) throw new Error(`HTTP ${firstRes.status}`);
+        const first = await firstRes.json();
+        const total: number = first.count ?? first.results?.length ?? 0;
+        const pageSize = first.results?.length || 100;
+        const pageCount = Math.ceil(total / pageSize);
+        const rest = await Promise.all(
+          Array.from({ length: Math.max(0, pageCount - 1) }, (_, i) =>
+            fetch(
+              `${BASE_URL}/journal_api/journals/?page=${i + 2}&page_size=${pageSize}`
+            )
+              .then((r) => (r.ok ? r.json() : { results: [] }))
+              .catch(() => ({ results: [] }))
+          )
+        );
+        const all: JournalOption[] = [first, ...rest]
+          .flatMap((p: any) => p.results || [])
+          .map((j: any) => ({ id: j.id, journal_title: j.journal_title }))
+          .sort((a, b) => a.journal_title.localeCompare(b.journal_title));
+        if (!cancelled) setJournals(all);
+      } catch (err) {
+        console.error('Failed to load journals list', err);
+      } finally {
+        if (!cancelled) setJournalsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const getToken = () => {
     const tokens = localStorage.getItem('authTokens');
@@ -225,7 +266,7 @@ const SubmitManuscripts = () => {
   };
 
   const handleSubmit = async () => {
-    if (!title || !abstract || !authors || !file) {
+    if (!title || !abstract || !authors || !file || !journalId) {
       setMessage('Please complete all required fields.');
       return;
     }
@@ -243,12 +284,9 @@ const SubmitManuscripts = () => {
     try {
       const formData = new FormData();
 
-      // Static FK values
-      formData.append('journal', String(journalId));
-      formData.append(
-        'corresponding_author',
-        String(correspondingAuthorId)
-      );
+      // corresponding_author is read_only on the backend serializer and is
+      // filled from request.user, so we only send the fields the user picked.
+      formData.append('journal', journalId);
 
       // User-entered values
       formData.append('title', title);
@@ -325,23 +363,23 @@ const SubmitManuscripts = () => {
                 Journal
               </label>
 
-              <input
-                value={`${journalTitle} (ID: ${journalId})`}
-                readOnly
-                className="w-full border rounded p-3 bg-gray-100"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium mb-1">
-                Corresponding Author ID
-              </label>
-
-              <input
-                value={correspondingAuthorId}
-                readOnly
-                className="w-full border rounded p-3 bg-gray-100"
-              />
+              <select
+                value={journalId}
+                onChange={(e) => setJournalId(e.target.value)}
+                disabled={journalsLoading}
+                className="w-full border rounded p-3 bg-white disabled:bg-gray-100"
+              >
+                <option value="">
+                  {journalsLoading
+                    ? 'Loading journals…'
+                    : '— Select a journal —'}
+                </option>
+                {journals.map((j) => (
+                  <option key={j.id} value={String(j.id)}>
+                    {j.journal_title}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
