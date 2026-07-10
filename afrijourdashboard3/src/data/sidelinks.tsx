@@ -162,6 +162,7 @@
 import {
   IconLayoutDashboard,
   IconBook,
+  IconBooks,
   IconCloudUp,
   IconLogs,
   IconFileDescription,
@@ -201,12 +202,17 @@ export const getSideLinks = (): SideLink[] => {
   const isEditor = roles.includes('Editor')
 
   const links: SideLink[] = [
-    // Default link visible to every authenticated user, regardless of role.
+    // Default links visible to every authenticated user, regardless of role.
     // Prevents HomeRedirect from bouncing role-less users back to /sign-in.
     {
       title: 'Journals',
       href: '/journals',
       icon: <IconLayoutDashboard size={18} />,
+    },
+    {
+      title: 'My Journals',
+      href: '/journal_list',
+      icon: <IconBooks size={18} />,
     },
   ]
 
@@ -251,20 +257,13 @@ export const getSideLinks = (): SideLink[] => {
         icon: <IconLogs size={18} />,
       },
       {
-        title: 'Add Journal',
-        href: '/journal_update',
-        icon: <IconFileDescription size={18} />,
-      },
-      {
-        title: 'Journal List',
-        href: '/journal_list',
-        icon: <IconLogs size={18} />,
-      },
-      {
         title: 'Pending Journals',
         href: '/pending_journals',
         icon: <IconFileDescription size={18} />,
       },
+      // "Add Journal" and "Journal List" are covered by the baseline
+      // "My Journals" link — staff members see an admin toggle there
+      // that switches to "All Journals" for cross-user management.
       // {
       //   title: 'Editors Manuscripts',
       //   href: '/editors_manuscript',

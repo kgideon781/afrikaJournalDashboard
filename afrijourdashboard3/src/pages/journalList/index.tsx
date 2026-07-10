@@ -1,242 +1,72 @@
-// import { Layout } from '@/components/custom/layout'
-// import  { useEffect, useState } from 'react'
-// import { Link } from 'react-router-dom'
-// import {
-//   Card,
-//   CardHeader,
-//   CardTitle,
-//   CardDescription,
-//   CardContent,
-// } from '@/components/ui/card'
-// import { FaPen, FaTrash } from 'react-icons/fa'
-// import { BASE_URL } from '../../config'
-
-// interface Language {
-//   id: number
-//   language: string
-//   created_at: string
-// }
-
-// interface ThematicArea {
-//   id: number
-//   thematic_area: string
-//   created_at: string
-// }
-
-// interface Journal {
-//   id: number
-//   language: Language | null
-//   platform: string | null
-//   country: string | null
-//   thematic_area: ThematicArea | null
-//   volumes: Array<any>
-//   image: string | null
-//   journal_title: string
-//   publishers_name: string
-//   issn_number: string
-//   link: string
-//   aim_identifier: boolean
-//   medline: boolean
-//   google_scholar_index: string | null
-//   impact_factor: number | null
-//   sjr: number | null
-//   h_index: number | null
-//   eigen_factor: number | null
-//   eigen_metrix: number | null
-//   snip: number | null
-//   snip_metrix: number | null
-//   open_access_journal: boolean | null
-//   listed_in_doaj: boolean | null
-//   present_issn: string | null
-//   publisher_in_cope: boolean | null
-//   online_publisher_africa: boolean | null
-//   hosted_on_inasps: boolean | null
-//   summary: string
-//   user: number
-// }
-
-// interface AuthTokens {
-//   access: string
-//   refresh: string
-// }
-
-// const journalList = () => {
-//   const [journals, setJournals] = useState<Journal[]>([])
-
-//   const getAuthTokens = (): AuthTokens | null => {
-//     const tokens = localStorage.getItem('authTokens')
-//     return tokens ? JSON.parse(tokens) : null
-//   }
-
-//   const handleDelete = async(id: number) => {
-//     // Placeholder — implement deletion logic
-//     console.log('Delete journal with ID:', id)
-
-//     const authTokens = getAuthTokens()
-//     const token = authTokens?.access
-
-//     if (!token) {
-//       alert('You are not authenticated')
-//       return
-//     }
-
-//     if (!window.confirm('Are you sure you want to delete this journal?')) {
-//       return
-//     }
-
-//     try {
-//       const response = await fetch(
-//         `${BASE_URL}/journal_api/api/user-journals/${id}/`,
-//         {
-//           method: 'DELETE',
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             'Content-Type': 'application/json',
-//           },
-//         }
-//       )
-
-//       if (response.ok || response.status === 204) {
-//         setJournals((prev) => prev.filter((volume) => volume.id !== id))
-//         alert('Journal deleted successfully')
-//       } else {
-//         console.error('Failed to delete journal', response.status)
-//         alert('Failed to delete journal')
-//       }
-//     } catch (error) {
-//       console.error('Error deleting journal:', error)
-//       alert('Error deleting journal')
-//     }
-//   }
-
-//   useEffect(() => {
-//     const fetchJournals = async () => {
-//       try {
-//         const authTokens = getAuthTokens()
-//         const token = authTokens?.access
-//         const response = await fetch(`${BASE_URL}/journal_api/user/journals/`, {
-//           method: 'GET',
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             'Content-Type': 'application/json',
-//           },
-//         })
-
-//         if (response.ok) {
-//           const data: Journal[] = await response.json()
-//           setJournals(data)
-//         } else {
-//           console.error('Failed to fetch journals', response.status)
-//         }
-//       } catch (error) {
-//         console.error('Error fetching journals:', error)
-//       }
-//     }
-
-//     fetchJournals()
-//   }, [])
-
-//   return (
-//     <Layout>
-//       <Layout.Body>
-//         <div className='grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-//           {journals.map((journal) => (
-//             <Card
-//               key={journal.id}
-//               className='relative flex flex-col justify-between rounded-2xl border bg-white p-6 shadow-md transition-all hover:scale-[1.03] hover:shadow-lg'
-//             >
-//               {/* Action Buttons */}
-//               <div className='absolute right-4 top-4 flex space-x-2'>
-//                 <Link to={`/upload/${journal.id}`}>
-//                   <button
-//                     type='button'
-//                     className='flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400'
-//                   >
-//                     <FaPen className='h-4 w-4 text-yellow-600' />
-//                   </button>
-//                 </Link>
-//                 <button
-//                   type='button'
-//                   onClick={() => handleDelete(journal.id)}
-//                   className='flex h-8 w-8 items-center justify-center rounded-full bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400'
-//                 >
-//                   <FaTrash className='h-4 w-4 text-red-600' />
-//                 </button>
-//               </div>
-
-//               {/* Journal Info */}
-//               <CardHeader className='mb-3 space-y-1 text-center'>
-//                 <CardTitle className='truncate text-base font-semibold leading-snug text-gray-800'>
-//                   {journal.journal_title}
-//                 </CardTitle>
-//                 <CardDescription className='text-xs text-gray-500'>
-//                   {journal.language
-//                     ? journal.language.language
-//                     : 'No language set'}
-//                 </CardDescription>
-//               </CardHeader>
-
-//               <CardContent className='space-y-2 text-center text-sm text-gray-700'>
-//                 <p>
-//                   <span className='font-medium text-gray-900'>Thematic:</span>{' '}
-//                   {journal.thematic_area?.thematic_area || 'Not specified'}
-//                 </p>
-//                 <p>
-//                   <span className='font-medium text-gray-900'>Publisher:</span>{' '}
-//                   {journal.publishers_name || 'Not specified'}
-//                 </p>
-//               </CardContent>
-//             </Card>
-//           ))}
-//         </div>
-//       </Layout.Body>
-//     </Layout>
-//   )
-// }
-
-// export default journalList
-
-import { Layout } from '@/components/custom/layout'
-import { useEffect, useState } from 'react'
+import {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+} from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '@/components/ui/card'
-import { FaPen, FaTrash } from 'react-icons/fa'
+  Search,
+  Plus,
+  Pencil,
+  Trash2,
+  Loader2,
+  X,
+  Shield,
+  User as UserIcon,
+  BadgeCheck,
+  Globe2,
+  Tag,
+  Building2,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react'
+import { Layout } from '@/components/custom/layout'
+import AuthContext from '../../AuthContext'
 import { BASE_URL } from '../../config'
-import './index.css'
-import { MdNextPlan } from "react-icons/md";
+
+/* ============================================================
+   Types
+   ============================================================ */
+
 interface Language {
   id: number
   language: string
-  created_at: string
 }
-
+interface Country {
+  id: number
+  country: string
+}
 interface ThematicArea {
   id: number
   thematic_area: string
-  created_at: string
+}
+interface Platform {
+  id: number
+  platform: string
 }
 
 interface Journal {
   id: number
-  language: Language | null
-  platform: string | null
-  country: string | null
-  thematic_area: ThematicArea | null
-  volumes: Array<any>
-  image: string | null
   journal_title: string
-  publishers_name: string
-  issn_number: string
-  link: string
+  publishers_name: string | null
+  issn_number: string | null
+  link: string | null
+  summary: string | null
+  language: Language | null
+  country: Country | null
+  thematic_area: ThematicArea | null
+  platform: Platform | null
   aim_identifier: boolean
   medline: boolean
-  google_scholar_index: string | null
+  google_scholar_index: boolean | null
+  open_access_journal: boolean | null
+  listed_in_doaj: boolean | null
+  present_issn: boolean | null
+  publisher_in_cope: boolean | null
+  online_publisher_africa: boolean | null
+  hosted_on_inasps: boolean | null
   impact_factor: number | null
   sjr: number | null
   h_index: number | null
@@ -244,342 +74,955 @@ interface Journal {
   eigen_metrix: number | null
   snip: number | null
   snip_metrix: number | null
-  open_access_journal: boolean | null
-  listed_in_doaj: boolean | null
-  present_issn: string | null
-  publisher_in_cope: boolean | null
-  online_publisher_africa: boolean | null
-  hosted_on_inasps: boolean | null
-  summary: string
-  user: number
+  approved: boolean
+  user: number | null
 }
 
-interface AuthTokens {
-  access: string
-  refresh: string
+interface JournalListResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: Journal[]
 }
 
-const JournalList = () => {
-  const [journals, setJournals] = useState<Journal[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
+type Scope = 'mine' | 'all'
 
-  const getAuthTokens = (): AuthTokens | null => {
-    const tokens = localStorage.getItem('authTokens')
-    return tokens ? JSON.parse(tokens) : null
+/* ============================================================
+   Helpers
+   ============================================================ */
+
+const authHeaders = (): HeadersInit => {
+  const tokens = localStorage.getItem('authTokens')
+  if (!tokens) return { 'Content-Type': 'application/json' }
+  try {
+    const access = JSON.parse(tokens)?.access
+    return {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${access}`,
+    }
+  } catch {
+    return { 'Content-Type': 'application/json' }
   }
+}
 
-  const handleDelete = async (id: number) => {
-    console.log('Delete journal with ID:', id)
-    const authTokens = getAuthTokens()
-    const token = authTokens?.access
+const emptyFormData = (userId?: number | null) => ({
+  journal_title: '',
+  publishers_name: '',
+  issn_number: '',
+  link: '',
+  summary: '',
+  language: '' as string | number,
+  country: '' as string | number,
+  thematic_area: '' as string | number,
+  platform: '' as string | number,
+  aim_identifier: false,
+  medline: false,
+  google_scholar_index: false,
+  open_access_journal: false,
+  listed_in_doaj: false,
+  present_issn: false,
+  publisher_in_cope: false,
+  online_publisher_africa: false,
+  hosted_on_inasps: false,
+  impact_factor: '' as string | number,
+  sjr: '' as string | number,
+  h_index: '' as string | number,
+  eigen_factor: '' as string | number,
+  snip: '' as string | number,
+  user: userId ?? undefined,
+})
 
-    if (!token) {
-      alert('You are not authenticated')
-      return
-    }
+type FormState = ReturnType<typeof emptyFormData>
 
-    if (!window.confirm('Are you sure you want to delete this journal?')) {
-      return
-    }
+/* Populate the form with an existing journal's data for edit mode. */
+const journalToForm = (j: Journal): FormState => ({
+  journal_title: j.journal_title ?? '',
+  publishers_name: j.publishers_name ?? '',
+  issn_number: j.issn_number ?? '',
+  link: j.link ?? '',
+  summary: j.summary ?? '',
+  language: j.language?.id ?? '',
+  country: j.country?.id ?? '',
+  thematic_area: j.thematic_area?.id ?? '',
+  platform: j.platform?.id ?? '',
+  aim_identifier: !!j.aim_identifier,
+  medline: !!j.medline,
+  google_scholar_index: !!j.google_scholar_index,
+  open_access_journal: !!j.open_access_journal,
+  listed_in_doaj: !!j.listed_in_doaj,
+  present_issn: !!j.present_issn,
+  publisher_in_cope: !!j.publisher_in_cope,
+  online_publisher_africa: !!j.online_publisher_africa,
+  hosted_on_inasps: !!j.hosted_on_inasps,
+  impact_factor: j.impact_factor ?? '',
+  sjr: j.sjr ?? '',
+  h_index: j.h_index ?? '',
+  eigen_factor: j.eigen_factor ?? '',
+  snip: j.snip ?? '',
+  user: j.user ?? undefined,
+})
 
-    try {
-      const response = await fetch(
-        `${BASE_URL}/journal_api/api/user-journals/${id}/`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+/* Convert form values to the JSON payload the API accepts.
+   Empty strings become null for optional numeric/FK fields, so we don't
+   send "" and get a 400. */
+const formToPayload = (f: FormState) => {
+  const numOrNull = (v: string | number) =>
+    v === '' || v === null || v === undefined ? null : Number(v)
+  return {
+    journal_title: f.journal_title,
+    publishers_name: f.publishers_name || null,
+    issn_number: f.issn_number || null,
+    link: f.link || null,
+    summary: f.summary || null,
+    language: numOrNull(f.language),
+    country: numOrNull(f.country),
+    thematic_area: numOrNull(f.thematic_area),
+    platform: numOrNull(f.platform),
+    aim_identifier: !!f.aim_identifier,
+    medline: !!f.medline,
+    google_scholar_index: !!f.google_scholar_index,
+    open_access_journal: !!f.open_access_journal,
+    listed_in_doaj: !!f.listed_in_doaj,
+    present_issn: !!f.present_issn,
+    publisher_in_cope: !!f.publisher_in_cope,
+    online_publisher_africa: !!f.online_publisher_africa,
+    hosted_on_inasps: !!f.hosted_on_inasps,
+    impact_factor: numOrNull(f.impact_factor),
+    sjr: numOrNull(f.sjr),
+    h_index: numOrNull(f.h_index),
+    eigen_factor: numOrNull(f.eigen_factor),
+    snip: numOrNull(f.snip),
+    user: f.user ?? undefined,
+  }
+}
 
-      if (response.ok || response.status === 204) {
-        setJournals((prev) => prev.filter((volume) => volume.id !== id))
-        alert('Journal deleted successfully')
-      } else {
-        console.error('Failed to delete journal', response.status)
-        alert('Failed to delete journal')
+/* ============================================================
+   Page
+   ============================================================ */
+
+const JournalListPage = () => {
+  const authContext = useContext(AuthContext)
+  const user = authContext?.user
+  const isStaff: boolean = !!user?.is_staff
+
+  const [scope, setScope] = useState<Scope>('mine')
+  const [journals, setJournals] = useState<Journal[]>([])
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+
+  // Reference data for select dropdowns
+  const [languages, setLanguages] = useState<Language[]>([])
+  const [countries, setCountries] = useState<Country[]>([])
+  const [thematic, setThematic] = useState<ThematicArea[]>([])
+  const [platforms, setPlatforms] = useState<Platform[]>([])
+
+  // Edit/create modal
+  const [showForm, setShowForm] = useState(false)
+  const [editingJournal, setEditingJournal] = useState<Journal | null>(null)
+  const [formData, setFormData] = useState<FormState>(() =>
+    emptyFormData(user?.user_id)
+  )
+  const [saving, setSaving] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(false)
+
+  // Delete confirmation
+  const [deletingJournal, setDeletingJournal] = useState<Journal | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  /* ---------- reference data ---------- */
+  useEffect(() => {
+    const load = async <T,>(url: string): Promise<T[]> => {
+      try {
+        const res = await fetch(url)
+        if (!res.ok) return []
+        return await res.json()
+      } catch {
+        return []
       }
-    } catch (error) {
-      console.error('Error deleting journal:', error)
-      alert('Error deleting journal')
+    }
+    void load<Language>(`${BASE_URL}/journal_api/api/languages/`).then(setLanguages)
+    void load<Country>(`${BASE_URL}/journal_api/api/country/`).then(setCountries)
+    void load<ThematicArea>(`${BASE_URL}/journal_api/api/thematic/`).then(
+      setThematic
+    )
+    void load<Platform>(`${BASE_URL}/journal_api/api/platform/`).then(setPlatforms)
+  }, [])
+
+  /* ---------- fetch list ---------- */
+  const fetchJournals = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const params = new URLSearchParams()
+      params.set('page', String(page))
+      params.set('page_size', String(pageSize))
+      if (isStaff && scope === 'all') params.set('scope', 'all')
+      const res = await fetch(
+        `${BASE_URL}/journal_api/api/user-journals/?${params.toString()}`,
+        { headers: authHeaders() }
+      )
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data: JournalListResponse = await res.json()
+      setJournals(data.results ?? [])
+      setTotal(data.count ?? 0)
+    } catch (e) {
+      setError((e as Error).message)
+      setJournals([])
+      setTotal(0)
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    const fetchJournals = async () => {
-      setLoading(true)
-      try {
-        const authTokens = getAuthTokens()
-        const token = authTokens?.access
-        const response = await fetch(`${BASE_URL}/journal_api/user/journals/`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })
+    void fetchJournals()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scope, page])
 
-        if (response.ok) {
-          const data: Journal[] = await response.json()
-          setJournals(data)
-        } else {
-          console.error('Failed to fetch journals', response.status)
-        }
-      } catch (error) {
-        console.error('Error fetching journals:', error)
-      } finally {
-        setLoading(false)
-      }
+  /* ---------- local text filter over the current page ---------- */
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return journals
+    return journals.filter((j) =>
+      [
+        j.journal_title,
+        j.publishers_name,
+        j.country?.country,
+        j.thematic_area?.thematic_area,
+      ]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(q))
+    )
+  }, [journals, search])
+
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+
+  /* ---------- open create/edit ---------- */
+  const openCreate = () => {
+    setEditingJournal(null)
+    setFormData(emptyFormData(user?.user_id))
+    setShowAdvanced(false)
+    setShowForm(true)
+  }
+
+  const openEdit = (j: Journal) => {
+    setEditingJournal(j)
+    setFormData(journalToForm(j))
+    setShowAdvanced(false)
+    setShowForm(true)
+  }
+
+  /* ---------- save (create or update) ---------- */
+  const handleSave = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!formData.journal_title.trim()) {
+      alert('Journal title is required')
+      return
     }
+    setSaving(true)
+    try {
+      const payload = formToPayload(formData)
+      const url = editingJournal
+        ? `${BASE_URL}/journal_api/api/user-journals/${editingJournal.id}/`
+        : `${BASE_URL}/journal_api/api/user-journals/`
+      const method = editingJournal ? 'PATCH' : 'POST'
+      const res = await fetch(url, {
+        method,
+        headers: authHeaders(),
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(`${res.status}: ${text.slice(0, 200)}`)
+      }
+      setShowForm(false)
+      setEditingJournal(null)
+      await fetchJournals()
+    } catch (e) {
+      alert(`Save failed — ${(e as Error).message}`)
+    } finally {
+      setSaving(false)
+    }
+  }
 
-    fetchJournals()
-  }, [])
+  /* ---------- delete ---------- */
+  const handleDelete = async () => {
+    if (!deletingJournal) return
+    setDeleting(true)
+    try {
+      const res = await fetch(
+        `${BASE_URL}/journal_api/api/user-journals/${deletingJournal.id}/`,
+        { method: 'DELETE', headers: authHeaders() }
+      )
+      if (!res.ok && res.status !== 204) throw new Error(`HTTP ${res.status}`)
+      setDeletingJournal(null)
+      await fetchJournals()
+    } catch (e) {
+      alert(`Delete failed — ${(e as Error).message}`)
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  const canEdit = (j: Journal): boolean => {
+    if (isStaff) return true
+    return j.user === user?.user_id
+  }
 
   return (
     <Layout>
       <Layout.Body>
-        <div className='grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-          {loading ? (
-            // <p className='col-span-full text-center'>Loading journals...</p>
-            <div className='col-span-full flex h-[80vh] w-full items-center justify-center'>
-              <p className='text-center text-lg text-gray-600'>
-                Loading journals...
-              </p>
-            </div>
-          ) : journals.length === 0 ? (
-            // <div className='col-span-full flex h-[80vh] w-full items-center justify-center'>
-            //   <p className='text-center text-lg text-gray-600'>
-            //     No journals Added.
-            //   </p>
-            // </div>
-            <div className='col-span-full flex h-[80vh] w-full flex-col items-center justify-center'>
-              <div className='mb-4'>
-                <svg
-                  viewBox='0 0 80 80'
-                  xmlns='http://www.w3.org/2000/svg'
-                  className='animate-disagree h-24 w-24'
-                  fill='none'
+        {/* ============ Header ============ */}
+        <div className='mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between'>
+          <div>
+            <h1 className='text-2xl font-bold text-foreground md:text-3xl'>
+              {scope === 'all' ? 'All Journals' : 'My Journals'}
+            </h1>
+            <p className='mt-1 text-sm text-muted-foreground'>
+              {scope === 'all'
+                ? 'Manage every journal in the catalogue. Admin view.'
+                : "The journals you've added. Edit or delete anything you own."}
+            </p>
+          </div>
+
+          <div className='flex items-center gap-2'>
+            {isStaff && (
+              <div className='inline-flex rounded-lg border border-border bg-card p-0.5'>
+                <button
+                  onClick={() => {
+                    setScope('mine')
+                    setPage(1)
+                  }}
+                  className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                    scope === 'mine'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
                 >
-                  <path
-                    d='M40.475 70.95C57.3059 70.95 70.95 57.3059 70.95 40.475C70.95 23.6441 57.3059 10 40.475 10C23.6441 10 10 23.6441 10 40.475C10 57.3059 23.6441 70.95 40.475 70.95Z'
-                    fill='url(#paint0_radial)'
-                  />
-                  <path
-                    opacity='0.5'
-                    d='M40.475 70.95C57.3059 70.95 70.95 57.3059 70.95 40.475C70.95 23.6441 57.3059 10 40.475 10C23.6441 10 10 23.6441 10 40.475C10 57.3059 23.6441 70.95 40.475 70.95Z'
-                    fill='url(#paint1_radial)'
-                  />
-                  <path
-                    d='M40.4749 51.7579C49.419 51.7579 52.2822 60.6027 49.5466 59.2136C45.8896 57.3568 43.5791 57.1867 40.4749 57.1867C37.3707 57.1867 35.0603 57.3709 31.4033 59.2136C28.6676 60.6027 31.5309 51.7579 40.4749 51.7579Z'
-                    fill='#643800'
-                  />
-                  <path
-                    d='M28.852 42.2185C28.852 42.2185 34.3517 41.694 35.9534 37.8527C36.0526 37.6118 36.1093 37.3566 36.1235 37.1015C36.1377 36.5912 35.6416 36.0526 34.6494 36.5487C28.5544 39.6245 25.0391 38.5473 22.4027 37.796C21.3679 37.4984 20.4466 38.5898 20.9144 39.3269C23.2815 43.0548 28.852 42.2185 28.852 42.2185Z'
-                    fill='url(#paint2_radial)'
-                  />
-                  <path
-                    d='M21.6371 29.1355C21.552 30.3545 22.8136 31.2049 25.0815 31.375C27.0092 31.5168 31.304 30.7514 34.4933 27.2077C35.0744 26.5557 34.2807 26.1163 33.7279 26.5274C31.8285 27.9165 26.8958 29.5324 23.1821 28.8662C21.6654 28.5827 21.6371 29.1355 21.6371 29.1355Z'
-                    fill='url(#paint3_linear)'
-                  />
-                  <path
-                    d='M35.9535 36.6054C35.7267 36.3503 35.3014 36.2369 34.6636 36.5629C28.5686 39.6387 25.0533 38.5615 22.4169 37.8102C21.8641 37.6543 21.3538 37.8953 21.0562 38.2496C25.2943 41.0845 33.2887 39.9506 35.9535 36.6054Z'
-                    fill='url(#paint4_linear)'
-                  />
-                  <path
-                    d='M40.4749 53.3171C45.7478 53.3171 49.0787 56.2937 50.5387 58.76C50.6237 56.9741 47.3495 51.7579 40.4749 51.7579C33.6144 51.7579 30.326 56.9741 30.411 58.76C31.871 56.2937 35.202 53.3171 40.4749 53.3171Z'
-                    fill='url(#paint5_linear)'
-                  />
-                  <path
-                    d='M52.0838 42.2185C52.0838 42.2185 46.5841 41.694 44.9824 37.8527C44.8832 37.6118 44.8265 37.3566 44.8123 37.1015C44.7981 36.5912 45.2942 36.0526 46.2864 36.5487C52.3814 39.6245 55.8967 38.5473 58.5331 37.796C59.5679 37.4984 60.4892 38.5898 60.0215 39.3269C57.6685 43.0548 52.0838 42.2185 52.0838 42.2185Z'
-                    fill='url(#paint6_radial)'
-                  />
-                  <path
-                    d='M59.3129 29.1355C59.398 30.3545 58.1365 31.2049 55.8686 31.375C53.9408 31.5168 49.646 30.7514 46.4568 27.2077C45.8756 26.5557 46.6694 26.1163 47.2222 26.5274C49.1215 27.9165 54.0542 29.5324 57.7679 28.8662C59.2846 28.5827 59.3129 29.1355 59.3129 29.1355Z'
-                    fill='url(#paint7_linear)'
-                  />
-                  <path
-                    d='M44.9966 36.6054C45.2234 36.3503 45.6486 36.2369 46.2865 36.5629C52.3815 39.6387 55.8967 38.5615 58.5332 37.8102C59.086 37.6543 59.5962 37.8953 59.8939 38.2496C55.6558 41.0845 47.6472 39.9506 44.9966 36.6054Z'
-                    fill='url(#paint8_linear)'
-                  />
-                  <defs>
-                    <radialGradient
-                      id='paint0_radial'
-                      cx='0'
-                      cy='0'
-                      r='1'
-                      gradientUnits='userSpaceOnUse'
-                      gradientTransform='translate(34.479 28.1245) scale(36.7641)'
-                    >
-                      <stop stopColor='#FFDF30' />
-                      <stop offset='1' stopColor='#FFB82E' />
-                    </radialGradient>
-                    <radialGradient
-                      id='paint1_radial'
-                      cx='0'
-                      cy='0'
-                      r='1'
-                      gradientUnits='userSpaceOnUse'
-                      gradientTransform='translate(34.479 28.1245) scale(28.924)'
-                    >
-                      <stop stopColor='#FFE95F' />
-                      <stop offset='1' stopColor='#FFBB47' stopOpacity='0' />
-                    </radialGradient>
-                    <radialGradient
-                      id='paint2_radial'
-                      cx='0'
-                      cy='0'
-                      r='1'
-                      gradientUnits='userSpaceOnUse'
-                      gradientTransform='translate(28.5837 39.6331) rotate(-5.56162) scale(5.89043 2.61753)'
-                    >
-                      <stop offset='0.00132565' stopColor='#7A4400' />
-                      <stop offset='1' stopColor='#643800' />
-                    </radialGradient>
-                    <linearGradient
-                      id='paint3_linear'
-                      x1='27.6175'
-                      y1='33.233'
-                      x2='28.0462'
-                      y2='29.0953'
-                      gradientUnits='userSpaceOnUse'
-                    >
-                      <stop offset='0.00132565' stopColor='#3C2200' />
-                      <stop offset='1' stopColor='#7A4400' />
-                    </linearGradient>
-                    <linearGradient
-                      id='paint4_linear'
-                      x1='28.3979'
-                      y1='35.8144'
-                      x2='28.6879'
-                      y2='40.8502'
-                      gradientUnits='userSpaceOnUse'
-                    >
-                      <stop offset='0.00132565' stopColor='#3C2200' />
-                      <stop offset='1' stopColor='#512D00' />
-                    </linearGradient>
-                    <linearGradient
-                      id='paint5_linear'
-                      x1='40.4745'
-                      y1='49.4458'
-                      x2='40.4745'
-                      y2='56.4978'
-                      gradientUnits='userSpaceOnUse'
-                    >
-                      <stop offset='0.00132565' stopColor='#3C2200' />
-                      <stop offset='1' stopColor='#512D00' />
-                    </linearGradient>
-                    <radialGradient
-                      id='paint6_radial'
-                      cx='0'
-                      cy='0'
-                      r='1'
-                      gradientUnits='userSpaceOnUse'
-                      gradientTransform='translate(52.3638 39.6331) rotate(-174.438) scale(5.89043 2.61753)'
-                    >
-                      <stop offset='0.00132565' stopColor='#7A4400' />
-                      <stop offset='1' stopColor='#643800' />
-                    </radialGradient>
-                    <linearGradient
-                      id='paint7_linear'
-                      x1='53.3302'
-                      y1='33.234'
-                      x2='52.9015'
-                      y2='29.0963'
-                      gradientUnits='userSpaceOnUse'
-                    >
-                      <stop offset='0.00132565' stopColor='#3C2200' />
-                      <stop offset='1' stopColor='#7A4400' />
-                    </linearGradient>
-                    <linearGradient
-                      id='paint8_linear'
-                      x1='52.5496'
-                      y1='35.8133'
-                      x2='52.2596'
-                      y2='40.849'
-                      gradientUnits='userSpaceOnUse'
-                    >
-                      <stop offset='0.00132565' stopColor='#3C2200' />
-                      <stop offset='1' stopColor='#512D00' />
-                    </linearGradient>
-                  </defs>
-                </svg>
+                  <UserIcon className='h-3.5 w-3.5' />
+                  My journals
+                </button>
+                <button
+                  onClick={() => {
+                    setScope('all')
+                    setPage(1)
+                  }}
+                  className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                    scope === 'all'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <Shield className='h-3.5 w-3.5' />
+                  All journals
+                </button>
+              </div>
+            )}
+
+            <button
+              onClick={openCreate}
+              className='inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90'
+            >
+              <Plus className='h-4 w-4' />
+              New journal
+            </button>
+          </div>
+        </div>
+
+        {/* ============ Search ============ */}
+        <div className='mb-4 flex items-center gap-2'>
+          <div className='relative flex-1 max-w-md'>
+            <Search className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+            <input
+              type='text'
+              placeholder='Filter this page by title, publisher, country…'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className='w-full rounded-lg border border-border bg-card py-2 pl-9 pr-3 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30'
+            />
+          </div>
+          <p className='text-xs text-muted-foreground'>
+            {loading ? 'Loading…' : `${total.toLocaleString()} total`}
+          </p>
+        </div>
+
+        {/* ============ Error ============ */}
+        {error && (
+          <div className='mb-4 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive-foreground'>
+            {error}
+          </div>
+        )}
+
+        {/* ============ Table ============ */}
+        {loading ? (
+          <div className='space-y-2'>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className='h-16 animate-pulse rounded-lg border border-border bg-muted'
+              />
+            ))}
+          </div>
+        ) : visible.length === 0 ? (
+          <div className='rounded-lg border border-dashed border-border bg-card p-12 text-center'>
+            <p className='text-sm text-muted-foreground'>
+              {scope === 'mine'
+                ? "You haven't added any journals yet."
+                : 'No journals match your filter.'}
+            </p>
+            {scope === 'mine' && (
+              <button
+                onClick={openCreate}
+                className='mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90'
+              >
+                <Plus className='h-4 w-4' />
+                Add your first journal
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className='overflow-hidden rounded-lg border border-border bg-card'>
+            <table className='w-full text-sm'>
+              <thead className='bg-muted text-xs uppercase tracking-wider text-muted-foreground'>
+                <tr>
+                  <th className='px-4 py-3 text-left'>Title</th>
+                  <th className='hidden px-4 py-3 text-left md:table-cell'>
+                    Publisher
+                  </th>
+                  <th className='hidden px-4 py-3 text-left lg:table-cell'>
+                    Country
+                  </th>
+                  <th className='hidden px-4 py-3 text-left lg:table-cell'>
+                    Thematic area
+                  </th>
+                  <th className='px-4 py-3 text-left'>Status</th>
+                  <th className='px-4 py-3 text-right'>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visible.map((j) => (
+                  <tr
+                    key={j.id}
+                    className='border-t border-border transition hover:bg-muted/40'
+                  >
+                    <td className='px-4 py-3'>
+                      <div className='font-medium text-foreground'>
+                        {j.journal_title || <em className='text-muted-foreground'>Untitled</em>}
+                      </div>
+                      {j.issn_number && (
+                        <div className='mt-0.5 text-xs text-muted-foreground'>
+                          ISSN {j.issn_number}
+                        </div>
+                      )}
+                    </td>
+                    <td className='hidden px-4 py-3 md:table-cell'>
+                      <div className='flex items-center gap-1.5 text-muted-foreground'>
+                        <Building2 className='h-3.5 w-3.5 text-primary/70' />
+                        <span className='truncate'>
+                          {j.publishers_name || '—'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className='hidden px-4 py-3 lg:table-cell'>
+                      <div className='flex items-center gap-1.5 text-muted-foreground'>
+                        <Globe2 className='h-3.5 w-3.5 text-primary/70' />
+                        {j.country?.country || '—'}
+                      </div>
+                    </td>
+                    <td className='hidden px-4 py-3 lg:table-cell'>
+                      <div className='flex items-center gap-1.5 text-muted-foreground'>
+                        <Tag className='h-3.5 w-3.5 text-primary/70' />
+                        <span className='line-clamp-1'>
+                          {j.thematic_area?.thematic_area || '—'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className='px-4 py-3'>
+                      <div className='flex flex-wrap gap-1'>
+                        {j.approved ? (
+                          <span className='inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-800'>
+                            <BadgeCheck className='h-3 w-3' />
+                            Approved
+                          </span>
+                        ) : (
+                          <span className='rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800'>
+                            Pending
+                          </span>
+                        )}
+                        {j.open_access_journal && (
+                          <span className='rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary'>
+                            OA
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className='px-4 py-3'>
+                      <div className='flex justify-end gap-1'>
+                        <Link
+                          to={`/journals/${j.id}`}
+                          className='inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground'
+                          title='View details'
+                        >
+                          <Search className='h-4 w-4' />
+                        </Link>
+                        {canEdit(j) && (
+                          <>
+                            <button
+                              onClick={() => openEdit(j)}
+                              className='inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                              title='Edit'
+                            >
+                              <Pencil className='h-4 w-4' />
+                            </button>
+                            <button
+                              onClick={() => setDeletingJournal(j)}
+                              className='inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+                              title='Delete'
+                            >
+                              <Trash2 className='h-4 w-4' />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* ============ Pagination ============ */}
+        {!loading && total > pageSize && (
+          <div className='mt-4 flex items-center justify-between'>
+            <p className='text-xs text-muted-foreground'>
+              Page {page} of {totalPages}
+            </p>
+            <div className='flex gap-2'>
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className='rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-40 hover:border-primary/40 hover:text-primary'
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className='rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-40 hover:border-primary/40 hover:text-primary'
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============ Edit / Create modal ============ */}
+        {showForm && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm'>
+            <div className='max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-xl border border-border bg-card shadow-2xl'>
+              <div className='flex items-center justify-between border-b border-border px-6 py-4'>
+                <h2 className='text-lg font-semibold text-foreground'>
+                  {editingJournal ? 'Edit journal' : 'Add new journal'}
+                </h2>
+                <button
+                  onClick={() => setShowForm(false)}
+                  className='rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground'
+                >
+                  <X className='h-5 w-5' />
+                </button>
               </div>
 
-              <p className='text-center text-lg text-gray-600'>
-                No journals Added.
-              </p>
-            </div>
-          ) : (
-            journals.map((journal) => (
-              <Card
-                key={journal.id}
-                className='relative flex flex-col justify-between rounded-2xl border bg-white p-6 shadow-md transition-all hover:scale-[1.03] hover:shadow-lg'
-              >
-                <div className='absolute right-4 top-4 flex space-x-2'>
-                  <Link to={`/volume_update`}>
-                    {/* <button
-                      type='button'
-                      className='flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400'
-                    >
-                      <FaPen className='h-4 w-4 text-yellow-600' />
-                    </button> */}
+              <form onSubmit={handleSave} className='flex max-h-[calc(90vh-8rem)] flex-col'>
+                <div className='flex-1 space-y-4 overflow-y-auto px-6 py-5'>
+                  {/* ---------- Basic fields ---------- */}
+                  <Field label='Title *'>
+                    <input
+                      type='text'
+                      required
+                      value={formData.journal_title}
+                      onChange={(e) =>
+                        setFormData({ ...formData, journal_title: e.target.value })
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
 
-                     <button
-                      type='button'
-                      className='flex h-8 w-8 items-center justify-center rounded-full bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-400'
-                    >
-                      {/* <FaPen className='h-4 w-4 text-yellow-600' /> */}
-                      <MdNextPlan className='h-4 w-4 text-green-600' />
-                    </button>
-                  </Link>
-                   <button
-                      type='button'
-                      className='flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400'
-                    >
-                      <FaPen className='h-4 w-4 text-yellow-600' />
-                    </button>
+                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                    <Field label='Publisher'>
+                      <input
+                        type='text'
+                        value={formData.publishers_name}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            publishers_name: e.target.value,
+                          })
+                        }
+                        className={inputClass}
+                      />
+                    </Field>
+                    <Field label='ISSN'>
+                      <input
+                        type='text'
+                        value={formData.issn_number}
+                        onChange={(e) =>
+                          setFormData({ ...formData, issn_number: e.target.value })
+                        }
+                        className={inputClass}
+                      />
+                    </Field>
+                  </div>
+
+                  <Field label='Website link'>
+                    <input
+                      type='url'
+                      value={formData.link}
+                      onChange={(e) =>
+                        setFormData({ ...formData, link: e.target.value })
+                      }
+                      placeholder='https://…'
+                      className={inputClass}
+                    />
+                  </Field>
+
+                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                    <SelectField
+                      label='Country'
+                      value={formData.country}
+                      onChange={(v) => setFormData({ ...formData, country: v })}
+                      options={countries.map((c) => ({
+                        value: c.id,
+                        label: c.country,
+                      }))}
+                    />
+                    <SelectField
+                      label='Language'
+                      value={formData.language}
+                      onChange={(v) => setFormData({ ...formData, language: v })}
+                      options={languages.map((l) => ({
+                        value: l.id,
+                        label: l.language,
+                      }))}
+                    />
+                  </div>
+
+                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                    <SelectField
+                      label='Thematic area'
+                      value={formData.thematic_area}
+                      onChange={(v) =>
+                        setFormData({ ...formData, thematic_area: v })
+                      }
+                      options={thematic.map((t) => ({
+                        value: t.id,
+                        label: t.thematic_area,
+                      }))}
+                    />
+                    <SelectField
+                      label='Platform'
+                      value={formData.platform}
+                      onChange={(v) => setFormData({ ...formData, platform: v })}
+                      options={platforms.map((p) => ({
+                        value: p.id,
+                        label: p.platform,
+                      }))}
+                    />
+                  </div>
+
+                  <Field label='Summary'>
+                    <textarea
+                      rows={4}
+                      value={formData.summary}
+                      onChange={(e) =>
+                        setFormData({ ...formData, summary: e.target.value })
+                      }
+                      className={`${inputClass} resize-none`}
+                    />
+                  </Field>
+
+                  <div className='flex flex-wrap gap-4 pt-1'>
+                    <Checkbox
+                      label='Open access'
+                      checked={formData.open_access_journal}
+                      onChange={(v) =>
+                        setFormData({ ...formData, open_access_journal: v })
+                      }
+                    />
+                    <Checkbox
+                      label='Indexed on Google Scholar'
+                      checked={formData.google_scholar_index}
+                      onChange={(v) =>
+                        setFormData({ ...formData, google_scholar_index: v })
+                      }
+                    />
+                  </div>
+
+                  {/* ---------- Advanced ---------- */}
                   <button
                     type='button'
-                    onClick={() => handleDelete(journal.id)}
-                    className='flex h-8 w-8 items-center justify-center rounded-full bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400'
+                    onClick={() => setShowAdvanced((s) => !s)}
+                    className='mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline'
                   >
-                    <FaTrash className='h-4 w-4 text-red-600' />
+                    {showAdvanced ? (
+                      <ChevronUp className='h-4 w-4' />
+                    ) : (
+                      <ChevronDown className='h-4 w-4' />
+                    )}
+                    Advanced metadata
                   </button>
-                  
+
+                  {showAdvanced && (
+                    <div className='rounded-lg border border-border bg-muted/40 p-4'>
+                      <div className='mb-3 grid grid-cols-2 gap-3 md:grid-cols-3'>
+                        <Checkbox
+                          label='Listed in DOAJ'
+                          checked={formData.listed_in_doaj}
+                          onChange={(v) =>
+                            setFormData({ ...formData, listed_in_doaj: v })
+                          }
+                        />
+                        <Checkbox
+                          label='COPE member'
+                          checked={formData.publisher_in_cope}
+                          onChange={(v) =>
+                            setFormData({ ...formData, publisher_in_cope: v })
+                          }
+                        />
+                        <Checkbox
+                          label='INASPS hosted'
+                          checked={formData.hosted_on_inasps}
+                          onChange={(v) =>
+                            setFormData({ ...formData, hosted_on_inasps: v })
+                          }
+                        />
+                        <Checkbox
+                          label='African Index Medicus'
+                          checked={formData.aim_identifier}
+                          onChange={(v) =>
+                            setFormData({ ...formData, aim_identifier: v })
+                          }
+                        />
+                        <Checkbox
+                          label='Medline indexed'
+                          checked={formData.medline}
+                          onChange={(v) =>
+                            setFormData({ ...formData, medline: v })
+                          }
+                        />
+                        <Checkbox
+                          label='Online publisher in Africa'
+                          checked={formData.online_publisher_africa}
+                          onChange={(v) =>
+                            setFormData({
+                              ...formData,
+                              online_publisher_africa: v,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className='grid grid-cols-2 gap-3 md:grid-cols-3'>
+                        <Field label='Impact factor'>
+                          <input
+                            type='number'
+                            step='0.01'
+                            value={formData.impact_factor}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                impact_factor: e.target.value,
+                              })
+                            }
+                            className={inputClass}
+                          />
+                        </Field>
+                        <Field label='SJR'>
+                          <input
+                            type='number'
+                            step='0.01'
+                            value={formData.sjr}
+                            onChange={(e) =>
+                              setFormData({ ...formData, sjr: e.target.value })
+                            }
+                            className={inputClass}
+                          />
+                        </Field>
+                        <Field label='h-index'>
+                          <input
+                            type='number'
+                            value={formData.h_index}
+                            onChange={(e) =>
+                              setFormData({ ...formData, h_index: e.target.value })
+                            }
+                            className={inputClass}
+                          />
+                        </Field>
+                        <Field label='Eigenfactor'>
+                          <input
+                            type='number'
+                            step='0.01'
+                            value={formData.eigen_factor}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                eigen_factor: e.target.value,
+                              })
+                            }
+                            className={inputClass}
+                          />
+                        </Field>
+                        <Field label='SNIP'>
+                          <input
+                            type='number'
+                            step='0.01'
+                            value={formData.snip}
+                            onChange={(e) =>
+                              setFormData({ ...formData, snip: e.target.value })
+                            }
+                            className={inputClass}
+                          />
+                        </Field>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <CardHeader className='mb-3 space-y-1 text-center'>
-                  <CardTitle className='truncate text-base font-semibold leading-snug text-gray-800'>
-                    {journal.journal_title}
-                  </CardTitle>
-                  <CardDescription className='text-xs text-gray-500'>
-                    {journal.language
-                      ? journal.language.language
-                      : 'No language set'}
-                  </CardDescription>
-                </CardHeader>
+                <div className='flex items-center justify-end gap-2 border-t border-border bg-muted/30 px-6 py-4'>
+                  <button
+                    type='button'
+                    onClick={() => setShowForm(false)}
+                    className='rounded-lg border border-border bg-card px-4 py-2 text-sm text-foreground hover:bg-muted'
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type='submit'
+                    disabled={saving}
+                    className='inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 disabled:opacity-60'
+                  >
+                    {saving && <Loader2 className='h-4 w-4 animate-spin' />}
+                    {editingJournal ? 'Save changes' : 'Create journal'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
-                <CardContent className='space-y-2 text-center text-sm text-gray-700'>
-                  <p>
-                    <span className='font-medium text-gray-900'>Thematic:</span>{' '}
-                    {journal.thematic_area?.thematic_area || 'Not specified'}
-                  </p>
-                  <p>
-                    <span className='font-medium text-gray-900'>
-                      Publisher:
-                    </span>{' '}
-                    {journal.publishers_name || 'Not specified'}
-                  </p>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
+        {/* ============ Delete confirm ============ */}
+        {deletingJournal && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm'>
+            <div className='w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl'>
+              <div className='px-6 py-5'>
+                <h3 className='text-lg font-semibold text-foreground'>
+                  Delete this journal?
+                </h3>
+                <p className='mt-2 text-sm text-muted-foreground'>
+                  <span className='font-medium text-foreground'>
+                    {deletingJournal.journal_title || 'Untitled'}
+                  </span>{' '}
+                  will be permanently removed. This can't be undone.
+                </p>
+              </div>
+              <div className='flex justify-end gap-2 border-t border-border bg-muted/30 px-6 py-4'>
+                <button
+                  onClick={() => setDeletingJournal(null)}
+                  disabled={deleting}
+                  className='rounded-lg border border-border bg-card px-4 py-2 text-sm text-foreground hover:bg-muted'
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className='inline-flex items-center gap-2 rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground hover:opacity-90 disabled:opacity-60'
+                >
+                  {deleting && <Loader2 className='h-4 w-4 animate-spin' />}
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </Layout.Body>
     </Layout>
   )
 }
 
-export default JournalList
+/* ============================================================
+   Small helpers
+   ============================================================ */
+
+const inputClass =
+  'w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30'
+
+const Field = ({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) => (
+  <label className='block'>
+    <span className='mb-1 block text-xs font-medium uppercase tracking-wider text-muted-foreground'>
+      {label}
+    </span>
+    {children}
+  </label>
+)
+
+const SelectField = ({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string
+  value: string | number
+  onChange: (v: string | number) => void
+  options: { value: string | number; label: string }[]
+}) => (
+  <Field label={label}>
+    <select
+      value={value}
+      onChange={(e) =>
+        onChange(e.target.value === '' ? '' : Number(e.target.value))
+      }
+      className={inputClass}
+    >
+      <option value=''>— Select —</option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  </Field>
+)
+
+const Checkbox = ({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string
+  checked: boolean
+  onChange: (v: boolean) => void
+}) => (
+  <label className='inline-flex cursor-pointer items-center gap-2 text-sm text-foreground'>
+    <input
+      type='checkbox'
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className='h-4 w-4 rounded border-border text-primary focus:ring-primary/40'
+    />
+    {label}
+  </label>
+)
+
+export default JournalListPage
