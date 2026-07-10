@@ -1,4 +1,4 @@
-# Stage 1: Build the SPA
+# Stage 1: Build
 FROM node:18 AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
