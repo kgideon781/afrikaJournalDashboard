@@ -58,13 +58,15 @@ export default function AppShell() {
           {mobileOpen ? <IconX size={22} /> : <IconMenu2 size={22} />}
         </button>
 
-        {/* Brand */}
-        <a href='/' className='flex items-center gap-2 select-none'>
-          <span className='inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/40'>
-            <span className='text-sm font-black tracking-tighter'>AJ</span>
-          </span>
-          <span className='hidden text-sm font-semibold sm:inline bg-gradient-to-r from-primary via-yellow-300 to-emerald-400 bg-clip-text text-transparent'>
-            Afrijour Dashboard
+        {/* Brand — real Afrika Journals logo shared with the landing site */}
+        <a href='/' className='flex items-center gap-2.5 select-none'>
+          <img
+            src='/logo.png'
+            alt='Afrika Journals'
+            className='h-9 w-auto object-contain md:h-10'
+          />
+          <span className='hidden text-sm font-semibold text-foreground/80 sm:inline'>
+            Dashboard
           </span>
         </a>
 
