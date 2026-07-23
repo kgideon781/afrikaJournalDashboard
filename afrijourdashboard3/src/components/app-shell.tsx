@@ -3,6 +3,8 @@ import { Outlet } from 'react-router-dom'
 import { IconMenu2, IconX } from '@tabler/icons-react'
 import Sidebar from './sidebar'
 import { UserNav } from './user-nav'
+import { LanguageSwitcher } from './language-switcher'
+import { useTranslation } from 'react-i18next'
 import useIsCollapsed from '@/hooks/use-is-collapsed'
 import { cn } from '@/lib/utils'
 
@@ -21,6 +23,7 @@ import { cn } from '@/lib/utils'
  * Mobile (< md): sidebar becomes a slide-in drawer, triggered by hamburger.
  */
 export default function AppShell() {
+  const { t } = useTranslation()
   const [isCollapsed, setIsCollapsed] = useIsCollapsed()
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -53,7 +56,7 @@ export default function AppShell() {
           type='button'
           onClick={() => setMobileOpen((v) => !v)}
           className='inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/80 hover:bg-muted hover:text-foreground md:hidden'
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-label={mobileOpen ? t('nav.close_menu') : t('nav.open_menu')}
         >
           {mobileOpen ? <IconX size={22} /> : <IconMenu2 size={22} />}
         </button>
@@ -62,16 +65,17 @@ export default function AppShell() {
         <a href='/' className='flex items-center gap-2.5 select-none'>
           <img
             src='/logo.png'
-            alt='Afrika Journals'
+            alt={t('app.brand')}
             className='h-9 w-auto object-contain md:h-10'
           />
           <span className='hidden text-sm font-semibold text-foreground/80 sm:inline'>
-            Dashboard
+            {t('app.brand_short')}
           </span>
         </a>
 
         {/* Right cluster */}
         <div className='ml-auto flex items-center gap-2'>
+          <LanguageSwitcher />
           <UserNav />
         </div>
       </header>

@@ -1,8 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom'
+import { SUPPORTED_LOCALES } from '@/i18n/config'
 import GeneralError from './pages/errors/general-error'
 import NotFoundError from './pages/errors/not-found-error'
 import MaintenanceError from './pages/errors/maintenance-error'
 import UnauthorisedError from './pages/errors/unauthorised-error.tsx'
+
+function detectBasename(): string | undefined {
+  const seg = window.location.pathname.split('/')[1] ?? ''
+  return (SUPPORTED_LOCALES as readonly string[]).includes(seg) ? `/${seg}` : undefined
+}
 
 const router = createBrowserRouter([
   // Auth routes
@@ -76,7 +82,7 @@ const router = createBrowserRouter([
       //   }),
       // },
       {
-        path: '/',
+        path: 'dashboard',
         lazy: async () => {
           const Dashboard = (await import('./pages/dashboard')).default
           const ProtectedRoute = (await import('./ProtectedRoute')).default
@@ -211,6 +217,24 @@ const router = createBrowserRouter([
           Component: (await import('./pages/submitManuscript/index.tsx')).default,
         }),
       },
+      {
+        path: 'submit_journal/',
+        lazy: async () => ({
+          Component: (await import('./pages/submitJournal/index.tsx')).default,
+        }),
+      },
+      {
+        path: 'users_list/',
+        lazy: async () => ({
+          Component: (await import('./pages/usersList/index.tsx')).default,
+        }),
+      },
+      {
+        path: 'bulk_upload/',
+        lazy: async () => ({
+          Component: (await import('./pages/bulkUpload/index.tsx')).default,
+        }),
+      },
        {
         path: 'my_manuscripts/',
         lazy: async () => ({
@@ -341,6 +365,6 @@ const router = createBrowserRouter([
 
   // Fallback 404 route
   { path: '*', Component: NotFoundError },
-])
+], { basename: detectBasename() })
 
 export default router

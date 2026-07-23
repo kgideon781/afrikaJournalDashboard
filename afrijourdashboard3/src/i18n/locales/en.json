@@ -1,0 +1,28 @@
+{
+  "app": {
+    "brand": "Afrika Journals",
+    "brand_short": "Dashboard"
+  },
+  "nav": {
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "dashboard": "Dashboard",
+    "journals": "Journals",
+    "articles": "Articles",
+    "manuscripts": "Manuscripts",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "sign_out": "Sign out"
+  },
+  "auth": {
+    "sign_in": "Sign in",
+    "sign_up": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot password?"
+  },
+  "language": {
+    "label": "Language",
+    "change": "Change language"
+  }
+}
