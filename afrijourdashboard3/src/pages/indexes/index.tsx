@@ -34,7 +34,7 @@ export default function IndexesPage() {
                   <img
                     className='absolute start-0 top-0 size-full rounded-xl object-cover transition-transform duration-500 ease-in-out group-hover:scale-105'
                     src='/images/scopus.png'
-                    alt='Image Description'
+                    alt='Scopus'
                   />
                 </div>
                 <div className='mt-7'>
@@ -60,7 +60,7 @@ export default function IndexesPage() {
                   <img
                     className='absolute start-0 top-0 size-full rounded-xl object-cover transition-transform duration-500 ease-in-out group-hover:scale-105'
                     src='/images/g_scholar.png'
-                    alt='Image Description'
+                    alt='Google Scholar'
                   />
                 </div>
                 <div className='mt-7'>

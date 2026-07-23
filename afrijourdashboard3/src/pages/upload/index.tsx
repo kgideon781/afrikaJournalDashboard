@@ -259,10 +259,8 @@ export default function Upload() {
             >
               <div className='grid grid-cols-1 gap-12 lg:grid-cols-3'>
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
-                  <label className='block font-medium text-gray-700'>
-                    Journal Title
-                  </label>
-                  <input
+                  <label htmlFor="journal_title" className='block font-medium text-gray-700'>Journal Title</label>
+                  <input id="journal_title"
                     type='text'
                     name='journal_title'
                     value={formData.journal_title}
@@ -273,10 +271,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
-                  <label className='block font-medium text-gray-700'>
-                    Platform
-                  </label>
-                  <select
+                  <label htmlFor="platform" className='block font-medium text-gray-700'>Platform</label>
+                  <select id="platform"
                     name='platform'
                     value={formData.platform}
                     onChange={handleChange}
@@ -292,10 +288,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
-                  <label className='block font-medium text-gray-700'>
-                    Countries
-                  </label>
-                  <select
+                  <label htmlFor="country" className='block font-medium text-gray-700'>Countries</label>
+                  <select id="country"
                     name='country'
                     value={formData.country}
                     onChange={handleChange}
@@ -311,10 +305,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
-                  <label className='block font-medium text-gray-700'>
-                    Publisher's Name
-                  </label>
-                  <input
+                  <label htmlFor="publishers_name" className='block font-medium text-gray-700'>Publisher's Name</label>
+                  <input id="publishers_name"
                     type='text'
                     name='publishers_name'
                     value={formData.publishers_name}
@@ -324,10 +316,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
-                  <label className='block font-medium text-gray-700'>
-                    Language
-                  </label>
-                  <select
+                  <label htmlFor="language" className='block font-medium text-gray-700'>Language</label>
+                  <select id="language"
                     name='language'
                     value={formData.language}
                     onChange={handleChange}
@@ -343,10 +333,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
-                  <label className='block font-medium text-gray-700'>
-                    Thematic Area
-                  </label>
-                  <select
+                  <label htmlFor="thematic_area" className='block font-medium text-gray-700'>Thematic Area</label>
+                  <select id="thematic_area"
                     name='thematic_area'
                     value={formData.thematic_area}
                     onChange={handleChange}
@@ -362,10 +350,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
-                  <label className='block font-medium text-gray-700'>
-                    ISSN Number
-                  </label>
-                  <input
+                  <label htmlFor="issn_number" className='block font-medium text-gray-700'>ISSN Number</label>
+                  <input id="issn_number"
                     type='text'
                     name='issn_number'
                     value={formData.issn_number}
@@ -375,10 +361,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4 lg:col-span-2'>
-                  <label className='block font-medium text-gray-700'>
-                    Link
-                  </label>
-                  <textarea
+                  <label htmlFor="link" className='block font-medium text-gray-700'>Link</label>
+                  <textarea id="link"
                     name='link'
                     value={formData.link}
                     onChange={handleChange}
@@ -388,10 +372,8 @@ export default function Upload() {
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
                   <div className='flex items-center'>
-                    <label className='block font-medium text-gray-700'>
-                      African Index Medicus Identifier
-                    </label>
-                    <input
+                    <label htmlFor="aim_identifier" className='block font-medium text-gray-700'>African Index Medicus Identifier</label>
+                    <input id="aim_identifier"
                       type='checkbox'
                       name='aim_identifier'
                       checked={formData.aim_identifier}
@@ -403,10 +385,8 @@ export default function Upload() {
 
                 <div className='col-span-3 space-y-4 lg:col-span-1'>
                   <div className='flex items-center'>
-                    <label className='block font-medium text-gray-700'>
-                      Medicine and Health Journal
-                    </label>
-                    <input
+                    <label htmlFor="medline" className='block font-medium text-gray-700'>Medicine and Health Journal</label>
+                    <input id="medline"
                       type='checkbox'
                       name='medline'
                       checked={formData.medline}
@@ -417,10 +397,8 @@ export default function Upload() {
                 </div>
 
                 <div className='col-span-3 space-y-4'>
-                  <label className='block font-medium text-gray-700'>
-                    Abtract
-                  </label>
-                  <textarea
+                  <label htmlFor="summary" className='block font-medium text-gray-700'>Abtract</label>
+                  <textarea id="summary"
                     name='summary'
                     value={formData.summary}
                     onChange={handleChange}

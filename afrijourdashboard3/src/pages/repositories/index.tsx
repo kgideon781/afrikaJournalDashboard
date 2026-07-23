@@ -31,7 +31,7 @@ export default function Repositories() {
                   <img
                     className='absolute start-0 top-0 size-full rounded-xl object-cover transition-transform duration-500 ease-in-out group-hover:scale-105'
                     src='/images/sabinet.png'
-                    alt='Image Description'
+                    alt='Sabinet'
                   />
                 </div>
                 <div className='mt-7'>
@@ -58,7 +58,7 @@ export default function Repositories() {
                   <img
                     className='absolute start-0 top-0 size-full rounded-xl object-cover transition-transform duration-500 ease-in-out group-hover:scale-105'
                     src='/images/ajol.png'
-                    alt='Image Description'
+                    alt='African Journals Online'
                   />
                 </div>
                 <div className='mt-7'>

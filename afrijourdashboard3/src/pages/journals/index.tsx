@@ -347,7 +347,9 @@ export default function Journals() {
         {showFilterForm && (
           <>
             {/* Overlay */}
-            <div
+            <button
+              type='button'
+              aria-label='Close filters'
               onClick={() => setShowFilterForm(false)}
               className='fixed inset-0 z-40 bg-black/60 backdrop-blur-sm'
             />

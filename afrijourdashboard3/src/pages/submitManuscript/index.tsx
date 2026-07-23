@@ -214,6 +214,17 @@ const SubmitManuscript = () => {
                         filteredJournals.slice(0, 100).map((j) => (
                           <li
                             key={j.id}
+                            role='option'
+                            aria-selected={String(j.id) === journalId}
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                setJournalId(String(j.id))
+                                setJournalSearch(j.journal_title)
+                                setJournalPickerOpen(false)
+                              }
+                            }}
                             onMouseDown={(e) => {
                               e.preventDefault()
                               setJournalId(String(j.id))

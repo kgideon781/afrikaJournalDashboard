@@ -12,7 +12,8 @@
     "manuscripts": "Manuscripts",
     "analytics": "Analytics",
     "settings": "Settings",
-    "sign_out": "Sign out"
+    "sign_out": "Sign out",
+    "skip_to_content": "Skip to main content"
   },
   "auth": {
     "sign_in": "Sign in",

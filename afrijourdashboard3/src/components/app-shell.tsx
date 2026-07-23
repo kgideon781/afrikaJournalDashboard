@@ -45,6 +45,13 @@ export default function AppShell() {
 
   return (
     <div className='relative flex h-full min-h-svh flex-col bg-background text-foreground'>
+      {/* Skip-to-content link — invisible until keyboard-focused, jumps past the shell chrome. */}
+      <a
+        href='#main-content'
+        className='sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground'
+      >
+        {t('nav.skip_to_content')}
+      </a>
       {/* ================= TOP BAR ================= */}
       <header
         className={cn(
@@ -115,7 +122,9 @@ export default function AppShell() {
             } as React.CSSProperties
           }
         >
+          <div id='main-content' tabIndex={-1}>
           <Outlet />
+        </div>
         </main>
       </div>
     </div>

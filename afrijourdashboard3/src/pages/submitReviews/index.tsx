@@ -177,10 +177,11 @@ const Index = () => {
                 </p>
               ) : (
                 queue.map((m) => (
-                  <div
+                  <button
+                    type='button'
                     key={m.id}
                     onClick={() => setSelected(m)}
-                    className={`p-3 rounded-lg border cursor-pointer transition
+                    className={`w-full text-left p-3 rounded-lg border cursor-pointer transition
                       ${
                         selected?.id === m.id
                           ? 'bg-blue-50 border-blue-400'
@@ -194,7 +195,7 @@ const Index = () => {
                     <span className="text-[11px] text-gray-400">
                       {m.status}
                     </span>
-                  </div>
+                  </button>
                 ))
               )}
             </div>

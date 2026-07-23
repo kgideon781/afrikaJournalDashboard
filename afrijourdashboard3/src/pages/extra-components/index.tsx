@@ -74,7 +74,6 @@ export default function ExtraComponents() {
                   <PinInput
                     className='flex h-10 space-x-4'
                     onComplete={(str) => console.log('completed', str)}
-                    autoFocus
                   >
                     <PinInputField component={Input} />
                     <PinInputField component={Input} />

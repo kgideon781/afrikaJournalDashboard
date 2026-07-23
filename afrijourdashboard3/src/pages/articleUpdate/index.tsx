@@ -362,8 +362,8 @@ const index = () => {
             className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'
           >
             <div>
-              <label className='mb-1 block font-medium'>Journal</label>
-              <select
+              <label htmlFor="journal" className='mb-1 block font-medium'>Journal</label>
+              <select id="journal"
                 name='journal'
                 value={formData.journal}
                 onChange={handleChange}
@@ -380,8 +380,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Volume</label>
-              <select
+              <label htmlFor="volume" className='mb-1 block font-medium'>Volume</label>
+              <select id="volume"
                 name='volume'
                 value={formData.volume}
                 onChange={handleChange}
@@ -398,8 +398,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Publication Date</label>
-              <input
+              <label htmlFor="publication_date" className='mb-1 block font-medium'>Publication Date</label>
+              <input id="publication_date"
                 type='date'
                 name='publication_date'
                 value={formData.publication_date}
@@ -410,8 +410,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Title</label>
-              <input
+              <label htmlFor="title" className='mb-1 block font-medium'>Title</label>
+              <input id="title"
                 type='text'
                 name='title'
                 value={formData.title}
@@ -423,8 +423,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Authors</label>
-              <input
+              <label htmlFor="authors" className='mb-1 block font-medium'>Authors</label>
+              <input id="authors"
                 type='text'
                 name='authors'
                 value={formData.authors}
@@ -436,8 +436,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Publisher</label>
-              <input
+              <label htmlFor="publisher" className='mb-1 block font-medium'>Publisher</label>
+              <input id="publisher"
                 type='text'
                 name='publisher'
                 value={formData.publisher}
@@ -449,8 +449,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>DOI</label>
-              <input
+              <label htmlFor="doi" className='mb-1 block font-medium'>DOI</label>
+              <input id="doi"
                 type='text'
                 name='doi'
                 value={formData.doi}
@@ -461,8 +461,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>License URL</label>
-              <input
+              <label htmlFor="license_url" className='mb-1 block font-medium'>License URL</label>
+              <input id="license_url"
                 type='text'
                 name='license_url'
                 value={formData.license_url}
@@ -473,8 +473,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Electronic ISSN</label>
-              <input
+              <label htmlFor="electronic_issn" className='mb-1 block font-medium'>Electronic ISSN</label>
+              <input id="electronic_issn"
                 type='text'
                 name='electronic_issn'
                 value={formData.electronic_issn}
@@ -485,8 +485,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Print ISSN</label>
-              <input
+              <label htmlFor="print_issn" className='mb-1 block font-medium'>Print ISSN</label>
+              <input id="print_issn"
                 type='text'
                 name='print_issn'
                 value={formData.print_issn}
@@ -497,8 +497,8 @@ const index = () => {
             </div>
 
             <div>
-              <label className='mb-1 block font-medium'>Article Type</label>
-              <input
+              <label htmlFor="article_type" className='mb-1 block font-medium'>Article Type</label>
+              <input id="article_type"
                 type='text'
                 name='article_type'
                 value={formData.article_type}
@@ -509,8 +509,8 @@ const index = () => {
             </div>
 
             <div className='lg:col-span-3'>
-              <label className='mb-1 block font-medium'>Abstract</label>
-              <textarea
+              <label htmlFor="abstract" className='mb-1 block font-medium'>Abstract</label>
+              <textarea id="abstract"
                 name='abstract'
                 value={formData.abstract}
                 onChange={handleChange}
@@ -521,8 +521,8 @@ const index = () => {
             </div>
 
             <div className='lg:col-span-3'>
-              <label className='mb-1 block font-medium'>Upload PDF</label>
-              <input
+              <label htmlFor="pdf" className='mb-1 block font-medium'>Upload PDF</label>
+              <input id="pdf"
                 type='file'
                 name='pdf'
                 onChange={handleFileChange}

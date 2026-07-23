@@ -58,7 +58,8 @@ export const FilterPanel = ({
         showFilterForm ? "translate-x-0" : "-translate-x-full"
       }`}
       style={{ width: "300px", zIndex: 50 }}
-      onClick={(e) => e.stopPropagation()} // Prevent click events from propagating
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Filter Options</h3>
