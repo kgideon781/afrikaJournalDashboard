@@ -11,7 +11,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { Loader2 } from 'lucide-react'
-import { ArticleCard } from '@/components/articles/ArticleCard'
+// ArticleCard swapped for local JournalCard (see bottom of file)
 import NotFoundPage from './components/NotFoundPage'
 
 interface Article {
@@ -56,17 +56,17 @@ export default function Journals() {
     try {
       const url =
         customUrl ||
-        `https://backend.afrikajournals.org/journal_api/articles/search/?query=${searchTerm}&page=${page}&page_size=${pageSize}`
+        `https://backend.afrikajournals.org/journal_api/journals/search/?query=${searchTerm}&page=${page}&page_size=${pageSize}`
       const response = await fetch(url)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = await response.json()
       if (data && data.results) {
         setArticles(
-          data.results.map((article: any) => ({
-            ...article,
-            abstract:
-              article.abstract ||
-              'Abstract not available. This is a placeholder describing the main points of the article.',
+          data.results.map((journal: any) => ({
+            ...journal,
+            summary:
+              journal.summary ||
+              'No description available for this journal.',
           }))
         )
         setTotalPages(Math.ceil(data.count / pageSize))
@@ -85,17 +85,17 @@ export default function Journals() {
     try {
       const url =
         customUrl ||
-        `https://backend.afrikajournals.org/journal_api/articles/search/?&page=${page}&page_size=${pageSize}`
+        `https://backend.afrikajournals.org/journal_api/journals/search/?&page=${page}&page_size=${pageSize}`
       const response = await fetch(url)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = await response.json()
       if (data && data.results) {
         setArticles(
-          data.results.map((article: any) => ({
-            ...article,
-            abstract:
-              article.abstract ||
-              'Abstract not available. This is a placeholder describing the main points of the article.',
+          data.results.map((journal: any) => ({
+            ...journal,
+            summary:
+              journal.summary ||
+              'No description available for this journal.',
           }))
         )
         setTotalPages(Math.ceil(data.count / pageSize))
@@ -135,8 +135,8 @@ export default function Journals() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
     const url = filteredQuery
-      ? `https://backend.afrikajournals.org/journal_api/articles/search/?query=${filteredQuery}&page=${page}&page_size=${pageSize}`
-      : `https://backend.afrikajournals.org/journal_api/articles/search/?query=${searchTerm}&page=${page}&page_size=${pageSize}`
+      ? `https://backend.afrikajournals.org/journal_api/journals/search/?query=${filteredQuery}&page=${page}&page_size=${pageSize}`
+      : `https://backend.afrikajournals.org/journal_api/journals/search/?query=${searchTerm}&page=${page}&page_size=${pageSize}`
     fetchArticles(page, url)
   }
   const toggleId = (setter: React.Dispatch<React.SetStateAction<number[]>>) => (id: number) =>
@@ -176,7 +176,7 @@ export default function Journals() {
     setShowFilterForm(false)
     fetchArticles(
       1,
-      `https://backend.afrikajournals.org/journal_api/articles/search/?query=${dynamicQuery}`
+      `https://backend.afrikajournals.org/journal_api/journals/search/?query=${dynamicQuery}`
     )
   }
 
@@ -286,8 +286,8 @@ export default function Journals() {
         {!isLoading && articles.length > 0 && (
           <>
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              {articles.map((a, i) => (
-                <ArticleCard key={i} article={a} />
+              {articles.map((j, i) => (
+                <JournalCard key={i} journal={j} />
               ))}
             </div>
 
@@ -481,3 +481,56 @@ function FilterSection({
     </section>
   )
 }
+
+
+// Inline journal-discovery card — mirrors ArticleCard styling but renders
+// journal-appropriate fields (publisher, country, thematic area, summary,
+// external link) instead of article-specific ones (authors, citations, DOI).
+function JournalCard({ journal }: { journal: any }) {
+  const externalUrl = journal?.link
+    ? String(journal.link).split(',')[0].trim()
+    : null
+  return (
+    <article className="mb-4 rounded-xl border border-border/60 bg-card/70 p-5 shadow-sm backdrop-blur transition hover:border-primary/40 hover:shadow-lg">
+      <h2 className="mb-3 text-base font-semibold leading-snug md:text-lg">
+        {journal.journal_title}
+      </h2>
+      {journal.publishers_name && (
+        <div className="mb-2 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground/80">Publisher:</span>{' '}
+          {journal.publishers_name}
+        </div>
+      )}
+      <div className="mb-2 flex flex-wrap gap-x-2 gap-y-1 text-xs text-muted-foreground">
+        {journal.country?.country && (
+          <span className="rounded bg-muted px-2 py-0.5">{journal.country.country}</span>
+        )}
+        {journal.thematic_area?.thematic_area && (
+          <span className="rounded bg-muted px-2 py-0.5">{journal.thematic_area.thematic_area}</span>
+        )}
+        {journal.language?.language && (
+          <span className="rounded bg-muted px-2 py-0.5">{journal.language.language}</span>
+        )}
+        {journal.issn_number && (
+          <span className="rounded bg-muted px-2 py-0.5">ISSN {journal.issn_number}</span>
+        )}
+      </div>
+      {journal.summary && (
+        <p className="mb-3 text-sm text-muted-foreground line-clamp-3">
+          {journal.summary}
+        </p>
+      )}
+      {externalUrl && (
+        <a
+          href={externalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-primary hover:underline"
+        >
+          Visit journal ↗
+        </a>
+      )}
+    </article>
+  )
+}
+
