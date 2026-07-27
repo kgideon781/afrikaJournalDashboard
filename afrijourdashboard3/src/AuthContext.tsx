@@ -150,6 +150,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setAuthTokens(data)
       setUser(jwtDecode(data.access))
       localStorage.setItem('authTokens', JSON.stringify(data))
+
+      // SSO handoff: if the sign-in URL carried a ?return=<url> and that URL
+      // is a trusted afrikajournals.org origin, bounce back to it with the
+      // freshly-minted tokens in the URL fragment. Landing consumes the
+      // fragment via AuthContext to become signed in without re-authenticating.
+      // Fragment (not query) is used so tokens don't leak into referrer headers
+      // or server access logs.
+      try {
+        const search = new URLSearchParams(window.location.search)
+        const returnTo = search.get('return')
+        if (returnTo) {
+          const url = new URL(returnTo)
+          const trusted =
+            url.hostname === 'afrikajournals.org' ||
+            url.hostname.endsWith('.afrikajournals.org') ||
+            url.hostname === 'localhost'
+          if (trusted) {
+            const sep = url.hash ? '&' : '#'
+            window.location.href = `${returnTo}${sep}access=${encodeURIComponent(
+              data.access
+            )}&refresh=${encodeURIComponent(data.refresh)}`
+            return
+          }
+        }
+      } catch {
+        /* fall through to default landing */
+      }
+
       window.location.href = '/'
       return
     }
