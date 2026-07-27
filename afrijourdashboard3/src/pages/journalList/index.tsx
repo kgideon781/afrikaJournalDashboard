@@ -1,7 +1,7 @@
 import {
   useContext,
   useEffect,
-  useMemo,
+  
   useState,
   type FormEvent,
 } from 'react'
@@ -253,7 +253,7 @@ const JournalListPage = () => {
   }, [])
 
   /* ---------- fetch list ---------- */
-  const fetchJournals = async () => {
+  const fetchJournals = async (searchTerm: string = '') => {
     setLoading(true)
     setError(null)
     try {
@@ -261,6 +261,7 @@ const JournalListPage = () => {
       params.set('page', String(page))
       params.set('page_size', String(pageSize))
       if (isStaff && scope === 'all') params.set('scope', 'all')
+      if (searchTerm.trim()) params.set('search', searchTerm.trim())
       const res = await fetch(
         `${BASE_URL}/journal_api/api/user-journals/?${params.toString()}`,
         { headers: authHeaders() }
@@ -278,26 +279,28 @@ const JournalListPage = () => {
     }
   }
 
+  // Debounce search: refetch 300ms after the user stops typing. Reset to
+  // page 1 whenever the search term changes so results are never hidden on
+  // some later page the user forgot they were on.
   useEffect(() => {
-    void fetchJournals()
+    const timeout = window.setTimeout(() => {
+      if (page !== 1 && search.trim()) {
+        setPage(1) // triggers the other effect
+      } else {
+        void fetchJournals(search)
+      }
+    }, 300)
+    return () => window.clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search])
+
+  useEffect(() => {
+    void fetchJournals(search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scope, page])
 
-  /* ---------- local text filter over the current page ---------- */
-  const visible = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    if (!q) return journals
-    return journals.filter((j) =>
-      [
-        j.journal_title,
-        j.publishers_name,
-        j.country?.country,
-        j.thematic_area?.thematic_area,
-      ]
-        .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(q))
-    )
-  }, [journals, search])
+  // Server already filtered; no client-side filter needed.
+  const visible = journals
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
 
@@ -423,6 +426,13 @@ const JournalListPage = () => {
               </div>
             )}
 
+            <Link
+              to='/submit_journal'
+              className='inline-flex items-center gap-1.5 rounded-lg border border-primary/40 bg-background px-4 py-2 text-sm font-semibold text-primary shadow-sm transition hover:bg-primary/10'
+            >
+              <Plus className='h-4 w-4' />
+              Submit new journal
+            </Link>
             <button
               onClick={openCreate}
               className='inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90'
