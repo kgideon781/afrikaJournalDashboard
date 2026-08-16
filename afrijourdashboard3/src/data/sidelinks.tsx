@@ -203,22 +203,38 @@ export const getSideLinks = (): SideLink[] => {
 
   const links: SideLink[] = [
     // Default links visible to every authenticated user, regardless of role.
-    // Prevents HomeRedirect from bouncing role-less users back to /sign-in.
+    // First entry doubles as the target HomeRedirect sends people to when
+    // they land at `/` — put the most valuable overview here.
+    {
+      title: 'Dashboard',
+      href: '/dashboard',
+      icon: <IconLayoutDashboard size={18} />,
+    },
     {
       title: 'Journals',
       href: '/journals',
-      icon: <IconLayoutDashboard size={18} />,
+      icon: <IconBooks size={18} />,
     },
     {
       title: 'My Journals',
       href: '/journal_list',
-      icon: <IconBooks size={18} />,
+      icon: <IconBook size={18} />,
     },
   ]
 
   // ================= AUTHOR =================
   if (isAuthor) {
     links.push(
+      {
+        title: 'Submit Journal',
+        href: '/submit_journal',
+        icon: <IconBooks size={18} />,
+      },
+      {
+        title: 'Bulk Upload',
+        href: '/bulk_upload',
+        icon: <IconCloudUp size={18} />,
+      },
       {
         title: 'Submit Manuscripts',
         href: '/submit_manuscripts',

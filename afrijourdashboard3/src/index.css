@@ -7,6 +7,13 @@
     /* Custom CSS Variables */
     --header-height: 4rem;
 
+    /* Sidebar widths — consumed by AppShell (main padding) and Sidebar (rail
+       width). Must stay in sync so main content doesn't slide under the fixed
+       rail. */
+    --sidebar-width: 16rem;
+    --sidebar-width-collapsed: 3.5rem;
+    --sidebar-current-desktop: var(--sidebar-width);
+
     /* Light research-first palette (2026-07-10) — matches the landing page
        so users see one coherent look across marketing + dashboard.
        Warm off-white canvas, deep green ink, gold brand accent. */

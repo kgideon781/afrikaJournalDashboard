@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import AuthContext from '../AuthContext'
 import { FaUserSlash } from "react-icons/fa";
 export function UserNav() {
@@ -75,6 +76,13 @@ export function UserNav() {
             Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
+          {user?.is_staff && (
+            <DropdownMenuItem asChild>
+              <Link to='/users_list' className='w-full cursor-pointer'>
+                Registered users
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         {/* <DropdownMenuSeparator /> */}
